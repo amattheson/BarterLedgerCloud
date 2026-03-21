@@ -114,6 +114,10 @@
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
 
+      <div style="margin-bottom: 15px; border-top: 1px dashed #ff0080; padding-top: 15px;">
+        <button class="btn btn-scrap" style="width: 100%; border-color: #ff0080; color: #ff0080; font-size: 0.9rem; padding: 10px;" onclick="resetToDefaultGoals()">Nuclear Option: Reset to OEM Goals</button>
+      </div>
+
       <button class="btn btn-red" style="width: 100%; margin: 0;" onclick="closeSettings()">Close Panel</button>
     </div>
 
@@ -174,7 +178,6 @@
   ];
   let contracts = [];
 
-  // Updated single default goal
   let defaultGoals = [
     { id: 'g1', name: "Family Saving's", current: 0, target: 100, reward: 50 }
   ];
@@ -252,6 +255,16 @@
   function applySettingsToUI() {
     document.getElementById('toggle-savings-module').checked = showSavingsModule;
     document.getElementById('savings-wrapper').style.display = showSavingsModule ? 'block' : 'none';
+  }
+
+  window.resetToDefaultGoals = () => {
+    if (confirm("WARNING: This will completely obliterate your current goals and reset to the factory baseline. Do you wish to proceed?")) {
+      savingsGoals = JSON.parse(JSON.stringify(defaultGoals));
+      savingsGoals.forEach(g => g.id = Date.now().toString() + Math.floor(Math.random() * 1000));
+      renderGoals();
+      saveToCloud();
+      closeSettings();
+    }
   }
 
   // --- Dynamic Financial Mechanics ---
