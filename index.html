@@ -110,8 +110,18 @@
       <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
       <label class="checkbox-wrapper" style="margin-bottom: 15px;">
         <input type="checkbox" id="toggle-savings-module" onchange="toggleModuleVisibility()">
-        Power to Capital Liquidation Module
+        Power to Capital Liquidation
       </label>
+      
+      <div style="margin-bottom: 15px; border-top: 1px dashed #2d244a; padding-top: 15px;">
+        <div style="color: #bba2ff; font-size: 0.9rem; margin-bottom: 10px;">Configure Savings Goal:</div>
+        <div class="input-group">
+          <input type="number" id="config-target" placeholder="Target ($)">
+          <input type="number" id="config-reward" placeholder="Reward ($)">
+        </div>
+        <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="updateSavingsConfig()">Update Goal Variables</button>
+      </div>
+
       <button class="btn btn-red" style="width: 100%; margin: 0;" onclick="closeSettings()">Close Panel</button>
     </div>
 
@@ -119,8 +129,8 @@
       <h2>Capital Liquidation</h2>
       <div class="card">
         <div class="flex-between">
-          <span class="task-name">Save $300 to unlock $100 spending</span>
-          <span style="color: #7ab4ff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 136, 255, 0.4);">$<span id="savings-current">0</span> <span style="color: #555;">/ $300</span></span>
+          <span class="task-name">Save $<span id="display-target">100</span> to unlock $<span id="display-reward">50</span></span>
+          <span style="color: #7ab4ff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 136, 255, 0.4);">$<span id="savings-current">0</span> <span style="color: #555;">/ $<span id="savings-bar-target">100</span></span></span>
         </div>
         
         <div class="progress-bar">
@@ -139,17 +149,7 @@
           <button class="btn btn-red" style="margin: 0; flex: 0.5;" onclick="injectCustomSavings(false)">Remove</button>
         </div>
         
-        <button class="btn btn-red" id="claim-savings-btn" style="display:none; width: 100%; margin: 15px 0 0 0;" onclick="claimSavings()">Claim $100 & Reset</button>
-        
-        <div class="flex-between" style="margin-top: 20px; border-top: 1px solid #2d244a; padding-top: 15px;">
-          <div style="color: #00e5ff; font-size: 1.1rem; font-weight: bold; text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);">
-            Fun Money: $<span id="liquid-cash">0</span>
-          </div>
-          <button class="btn btn-red" style="flex: 0 1 auto; padding: 6px 12px; font-size: 0.8rem;" onclick="spendLiquid(10)">Spend $10</button>
-        </div>
-        <div style="margin-top: 8px; text-align: left; color: #bba2ff; font-size: 0.85rem; text-shadow: 0 0 5px rgba(187, 162, 255, 0.2);">
-          Lifetime Capital Saved: $<span id="lifetime-saved">0</span>
-        </div>
+        <button class="btn btn-red" id="claim-savings-btn" style="display:none; width: 100%; margin: 15px 0 0 0;" onclick="claimSavings()">Claim Reward & Reset</button>
       </div>
     </div>
 
@@ -159,8 +159,8 @@
     <h2>Forge New Contract</h2>
     <div class="card" style="border-color: #2d244a;">
       <div class="input-group">
-        <input type="text" id="new-task" placeholder="The Chore (e.g., Mow Lawn)">
-        <input type="text" id="new-reward" placeholder="The Reward (e.g., 1 Hour Gaming)">
+        <input type="text" id="new-task" placeholder="The Chore (e.g., Walk a mile)">
+        <input type="text" id="new-reward" placeholder="The Reward (e.g., Snack)">
       </div>
       <div class="input-group">
         <input type="number" id="new-earn" placeholder="Earn amt" value="1" style="width: 50%;">
@@ -199,14 +199,13 @@
   
   // Data State
   let savedCapital = 0;
-  let liquidCash = 0;
-  let lifetimeSaved = 0;
-  let showSavingsModule = true; // Default toggle state
-  const savingTarget = 300;
+  let savingTarget = 100;
+  let claimReward = 50;
+  let showSavingsModule = true; 
   
   let defaultContracts = [
-    { id: 'c1', task: 'Complete Workout', reward: 'Massage', balance: 0, earnRate: 1, costRate: 1 },
-    { id: 'c2', task: 'Morning Tea & Protein Lunch', reward: 'Liquor (oz)', balance: 0, earnRate: 4, costRate: 1 }
+    { id: 'c1', task: 'Walk a mile', reward: 'have a snack', balance: 0, earnRate: 1, costRate: 1 },
+    { id: 'c2', task: 'Study for 1 hour', reward: 'YouTube for 10 minutes', balance: 0, earnRate: 1, costRate: 1 }
   ];
   let contracts = [];
 
@@ -257,11 +256,9 @@
     if (docSnap.exists()) {
       let data = docSnap.data();
       savedCapital = data.savedCapital || 0;
-      liquidCash = data.liquidCash || 0;
-      lifetimeSaved = data.lifetimeSaved || 0;
+      savingTarget = data.savingTarget || 100;
+      claimReward = data.claimReward || 50;
       contracts = data.contracts || defaultContracts;
-      
-      // Load UI settings
       showSavingsModule = data.showSavingsModule !== false; 
     } else {
       contracts = defaultContracts;
@@ -278,21 +275,35 @@
     const docRef = doc(db, "ledgers", currentUser.uid);
     setDoc(docRef, {
       savedCapital: savedCapital,
-      liquidCash: liquidCash,
-      lifetimeSaved: lifetimeSaved,
+      savingTarget: savingTarget,
+      claimReward: claimReward,
       contracts: contracts,
       showSavingsModule: showSavingsModule
     });
   }
 
   // --- Settings Panel Logic ---
-  window.openSettings = () => { document.getElementById('settings-panel').style.display = 'block'; };
+  window.openSettings = () => { 
+    document.getElementById('settings-panel').style.display = 'block'; 
+    document.getElementById('config-target').value = savingTarget;
+    document.getElementById('config-reward').value = claimReward;
+  };
   window.closeSettings = () => { document.getElementById('settings-panel').style.display = 'none'; };
 
   window.toggleModuleVisibility = () => {
     showSavingsModule = document.getElementById('toggle-savings-module').checked;
     applySettingsToUI();
     saveToCloud();
+  }
+  
+  window.updateSavingsConfig = () => {
+    let t = parseInt(document.getElementById('config-target').value);
+    let r = parseInt(document.getElementById('config-reward').value);
+    if (!isNaN(t) && t > 0) savingTarget = t;
+    if (!isNaN(r) && r >= 0) claimReward = r;
+    updateFinancials();
+    saveToCloud();
+    closeSettings();
   }
 
   function applySettingsToUI() {
@@ -303,8 +314,10 @@
   // --- Financial Mechanics ---
   function updateFinancials() {
     document.getElementById('savings-current').innerText = savedCapital;
-    document.getElementById('liquid-cash').innerText = liquidCash;
-    document.getElementById('lifetime-saved').innerText = lifetimeSaved;
+    document.getElementById('display-target').innerText = savingTarget;
+    document.getElementById('display-reward').innerText = claimReward;
+    document.getElementById('savings-bar-target').innerText = savingTarget;
+    
     let percent = Math.min((Math.max(savedCapital, 0) / savingTarget) * 100, 100);
     document.getElementById('savings-bar').style.width = percent + '%';
     
@@ -317,7 +330,6 @@
 
   window.addSavings = (amount) => {
     savedCapital += amount;
-    lifetimeSaved += amount;
     updateFinancials();
     saveToCloud();
   }
@@ -328,7 +340,6 @@
     if (!isNaN(amount) && amount > 0) {
       let finalAmount = isAdding ? amount : -amount;
       savedCapital += finalAmount;
-      lifetimeSaved += finalAmount;
       inputField.value = ''; 
       updateFinancials();
       saveToCloud();
@@ -338,15 +349,6 @@
   window.claimSavings = () => {
     if (savedCapital >= savingTarget) {
       savedCapital -= savingTarget;
-      liquidCash += 100; 
-      updateFinancials();
-      saveToCloud();
-    }
-  }
-
-  window.spendLiquid = (amount) => {
-    if (liquidCash >= amount) {
-      liquidCash -= amount;
       updateFinancials();
       saveToCloud();
     }
