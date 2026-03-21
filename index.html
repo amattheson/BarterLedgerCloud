@@ -47,7 +47,7 @@
   .btn-red { background: rgba(255, 0, 128, 0.1); border-color: #ff0080; color: #ff80c0; }
   .btn-red:active { background: #ff0080; color: #fff; box-shadow: 0 0 15px #ff0080; }
 
-  .btn-google { background: #e0e0f0; color: #09090e; border-color: #fff; margin-top: 15px; width: 100%; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+  .btn-google { background: #e0e0f0; color: #09090e; border-color: #fff; margin-top: 15px; width: 100%; box-shadow: 0 0 10px rgba(255,255,255,0.2); padding: 15px; font-size: 1rem; }
   .btn-google:active { background: #fff; box-shadow: 0 0 15px #fff; }
   
   .btn-scrap {
@@ -73,7 +73,6 @@
   }
   input:focus { outline: none; border-color: #0088ff; box-shadow: 0 0 8px rgba(0, 136, 255, 0.4); }
 
-  /* Custom Checkbox */
   .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; }
   .checkbox-wrapper input { width: 20px; height: 20px; cursor: pointer; accent-color: #0088ff; }
 
@@ -88,19 +87,8 @@
 
   <div id="auth-screen" class="card">
     <h2 style="text-align: center; margin-top: 0; border: none;">Access The Vault</h2>
-    <div class="input-group">
-      <input type="email" id="auth-email" placeholder="Email Address">
-    </div>
-    <div class="input-group">
-      <input type="password" id="auth-password" placeholder="Password">
-    </div>
-    <div class="flex-between" style="margin-top: 20px;">
-      <button class="btn btn-green" onclick="handleLogin()">Log In</button>
-      <button class="btn btn-red" onclick="handleRegister()">Register</button>
-    </div>
-    <div style="text-align: center; margin: 15px 0; color: #555; font-size: 0.9rem;">— OR —</div>
+    <p style="text-align: center; color: #bba2ff; font-size: 0.9rem; margin-bottom: 20px;">Identity verification required.</p>
     <button class="btn btn-google" onclick="handleGoogleLogin()">Authenticate with Google</button>
-    
     <div id="auth-error" style="color: #ff0080; text-align: center; margin-top: 15px; font-size: 0.85rem; height: 20px;"></div>
   </div>
 
@@ -110,46 +98,25 @@
       <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
       <label class="checkbox-wrapper" style="margin-bottom: 15px;">
         <input type="checkbox" id="toggle-savings-module" onchange="toggleModuleVisibility()">
-        Power to Capital Liquidation
+        Power to Capital Liquidation Module
       </label>
-      
-      <div style="margin-bottom: 15px; border-top: 1px dashed #2d244a; padding-top: 15px;">
-        <div style="color: #bba2ff; font-size: 0.9rem; margin-bottom: 10px;">Configure Savings Goal:</div>
-        <div class="input-group">
-          <input type="number" id="config-target" placeholder="Target ($)">
-          <input type="number" id="config-reward" placeholder="Reward ($)">
-        </div>
-        <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="updateSavingsConfig()">Update Goal Variables</button>
-      </div>
-
       <button class="btn btn-red" style="width: 100%; margin: 0;" onclick="closeSettings()">Close Panel</button>
     </div>
 
-    <div id="savings-module">
+    <div id="savings-wrapper">
       <h2>Capital Liquidation</h2>
-      <div class="card">
-        <div class="flex-between">
-          <span class="task-name">Save $<span id="display-target">100</span> to unlock $<span id="display-reward">50</span></span>
-          <span style="color: #7ab4ff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 136, 255, 0.4);">$<span id="savings-current">0</span> <span style="color: #555;">/ $<span id="savings-bar-target">100</span></span></span>
+      <div id="savings-container"></div>
+      
+      <div class="card" style="border-color: #2d244a; margin-top: 15px;">
+        <div style="color: #bba2ff; font-size: 0.9rem; margin-bottom: 10px;">Forge New Capital Goal:</div>
+        <div class="input-group">
+          <input type="text" id="new-goal-name" placeholder="Goal Name (e.g., CDL Fees)">
         </div>
-        
-        <div class="progress-bar">
-          <div class="progress-fill" id="savings-bar"></div>
+        <div class="input-group">
+          <input type="number" id="new-goal-target" placeholder="Target ($)" style="width: 50%;">
+          <input type="number" id="new-goal-reward" placeholder="Reward ($)" style="width: 50%;">
         </div>
-        
-        <div class="flex-between" style="margin: 0 -5px;">
-          <button class="btn btn-green" onclick="addSavings(5)">+$5</button>
-          <button class="btn btn-green" onclick="addSavings(10)">+$10</button>
-          <button class="btn btn-green" onclick="addSavings(20)">+$20</button>
-        </div>
-        
-        <div class="input-group" style="margin-top: 10px;">
-          <input type="number" id="custom-savings" placeholder="Custom Amount">
-          <button class="btn btn-green" style="margin: 0; flex: 0.5;" onclick="injectCustomSavings(true)">Add</button>
-          <button class="btn btn-red" style="margin: 0; flex: 0.5;" onclick="injectCustomSavings(false)">Remove</button>
-        </div>
-        
-        <button class="btn btn-red" id="claim-savings-btn" style="display:none; width: 100%; margin: 15px 0 0 0;" onclick="claimSavings()">Claim Reward & Reset</button>
+        <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
     </div>
 
@@ -177,7 +144,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -196,18 +163,20 @@
   const googleProvider = new GoogleAuthProvider();
 
   let currentUser = null;
-  
-  // Data State
-  let savedCapital = 0;
-  let savingTarget = 100;
-  let claimReward = 50;
   let showSavingsModule = true; 
   
+  // Factory Defaults
   let defaultContracts = [
-    { id: 'c1', task: 'Walk a mile', reward: 'have a snack', balance: 0, earnRate: 1, costRate: 1 },
-    { id: 'c2', task: 'Study for 1 hour', reward: 'YouTube for 10 minutes', balance: 0, earnRate: 1, costRate: 1 }
+    { id: 'c1', task: 'Walk a mile', reward: 'Have a snack', balance: 0, earnRate: 1, costRate: 1 },
+    { id: 'c2', task: 'Study for 1 hour', reward: 'YouTube for 10 min', balance: 0, earnRate: 1, costRate: 1 }
   ];
   let contracts = [];
+
+  let defaultGoals = [
+    { id: 'g1', name: 'ASE Certification Fund', current: 0, target: 150, reward: 50 },
+    { id: 'g2', name: 'ICON Hand Tools', current: 0, target: 200, reward: 100 }
+  ];
+  let savingsGoals = [];
 
   // --- Authentication ---
   onAuthStateChanged(auth, async (user) => {
@@ -223,25 +192,9 @@
     }
   });
 
-  window.handleLogin = () => {
-    const e = document.getElementById('auth-email').value;
-    const p = document.getElementById('auth-password').value;
-    signInWithEmailAndPassword(auth, e, p).catch(error => {
-      document.getElementById('auth-error').innerText = error.message;
-    });
-  };
-
-  window.handleRegister = () => {
-    const e = document.getElementById('auth-email').value;
-    const p = document.getElementById('auth-password').value;
-    createUserWithEmailAndPassword(auth, e, p).catch(error => {
-      document.getElementById('auth-error').innerText = error.message;
-    });
-  };
-
   window.handleGoogleLogin = () => {
     signInWithPopup(auth, googleProvider).catch(error => {
-      document.getElementById('auth-error').innerText = "Google Auth Failed: " + error.message;
+      document.getElementById('auth-error').innerText = "Access Denied: " + error.message;
     });
   };
 
@@ -255,18 +208,17 @@
     
     if (docSnap.exists()) {
       let data = docSnap.data();
-      savedCapital = data.savedCapital || 0;
-      savingTarget = data.savingTarget || 100;
-      claimReward = data.claimReward || 50;
       contracts = data.contracts || defaultContracts;
+      savingsGoals = data.savingsGoals || defaultGoals;
       showSavingsModule = data.showSavingsModule !== false; 
     } else {
       contracts = defaultContracts;
+      savingsGoals = defaultGoals;
       saveToCloud(); 
     }
     
     applySettingsToUI();
-    updateFinancials();
+    renderGoals();
     renderContracts();
   }
 
@@ -274,20 +226,14 @@
     if (!currentUser) return;
     const docRef = doc(db, "ledgers", currentUser.uid);
     setDoc(docRef, {
-      savedCapital: savedCapital,
-      savingTarget: savingTarget,
-      claimReward: claimReward,
       contracts: contracts,
+      savingsGoals: savingsGoals,
       showSavingsModule: showSavingsModule
     });
   }
 
   // --- Settings Panel Logic ---
-  window.openSettings = () => { 
-    document.getElementById('settings-panel').style.display = 'block'; 
-    document.getElementById('config-target').value = savingTarget;
-    document.getElementById('config-reward').value = claimReward;
-  };
+  window.openSettings = () => { document.getElementById('settings-panel').style.display = 'block'; };
   window.closeSettings = () => { document.getElementById('settings-panel').style.display = 'none'; };
 
   window.toggleModuleVisibility = () => {
@@ -295,61 +241,100 @@
     applySettingsToUI();
     saveToCloud();
   }
-  
-  window.updateSavingsConfig = () => {
-    let t = parseInt(document.getElementById('config-target').value);
-    let r = parseInt(document.getElementById('config-reward').value);
-    if (!isNaN(t) && t > 0) savingTarget = t;
-    if (!isNaN(r) && r >= 0) claimReward = r;
-    updateFinancials();
-    saveToCloud();
-    closeSettings();
-  }
 
   function applySettingsToUI() {
     document.getElementById('toggle-savings-module').checked = showSavingsModule;
-    document.getElementById('savings-module').style.display = showSavingsModule ? 'block' : 'none';
+    document.getElementById('savings-wrapper').style.display = showSavingsModule ? 'block' : 'none';
   }
 
-  // --- Financial Mechanics ---
-  function updateFinancials() {
-    document.getElementById('savings-current').innerText = savedCapital;
-    document.getElementById('display-target').innerText = savingTarget;
-    document.getElementById('display-reward').innerText = claimReward;
-    document.getElementById('savings-bar-target').innerText = savingTarget;
-    
-    let percent = Math.min((Math.max(savedCapital, 0) / savingTarget) * 100, 100);
-    document.getElementById('savings-bar').style.width = percent + '%';
-    
-    if (savedCapital >= savingTarget) {
-      document.getElementById('claim-savings-btn').style.display = 'block';
-    } else {
-      document.getElementById('claim-savings-btn').style.display = 'none';
-    }
+  // --- Dynamic Financial Mechanics ---
+  function renderGoals() {
+    const container = document.getElementById('savings-container');
+    container.innerHTML = '';
+
+    savingsGoals.forEach((goal, index) => {
+      let percent = Math.min((Math.max(goal.current, 0) / goal.target) * 100, 100);
+      let claimDisplay = goal.current >= goal.target ? 'block' : 'none';
+
+      container.innerHTML += `
+        <div class="card">
+          <div class="flex-between" style="border-bottom: 1px solid #2d244a; padding-bottom: 8px; margin-bottom: 12px;">
+            <span class="task-name" style="color: #bba2ff;">${goal.name} (Save $<span style="color: #fff;">${goal.target}</span>)</span>
+            <button class="btn-scrap" onclick="deleteGoal(${index})">Scrap</button>
+          </div>
+          
+          <div class="flex-between" style="margin-top: 10px;">
+            <span style="color: #7ab4ff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 136, 255, 0.4);">$<span>${goal.current}</span> <span style="color: #555;">/ $<span>${goal.target}</span></span></span>
+            <span style="color: #ff80c0; font-size: 0.85rem;">Reward: $${goal.reward}</span>
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${percent}%;"></div>
+          </div>
+          
+          <div class="flex-between" style="margin: 0 -5px;">
+            <button class="btn btn-green" onclick="modifyGoal(${index}, 5)">+$5</button>
+            <button class="btn btn-green" onclick="modifyGoal(${index}, 10)">+$10</button>
+            <button class="btn btn-green" onclick="modifyGoal(${index}, 20)">+$20</button>
+          </div>
+          
+          <div class="input-group" style="margin-top: 10px;">
+            <input type="number" id="custom-goal-${index}" placeholder="Custom Amount">
+            <button class="btn btn-green" style="margin: 0; flex: 0.5;" onclick="injectGoal(${index}, true)">Add</button>
+            <button class="btn btn-red" style="margin: 0; flex: 0.5;" onclick="injectGoal(${index}, false)">Remove</button>
+          </div>
+          
+          <button class="btn btn-red" style="display:${claimDisplay}; width: 100%; margin: 15px 0 0 0;" onclick="claimGoal(${index})">Claim $${goal.reward} & Reset</button>
+        </div>
+      `;
+    });
   }
 
-  window.addSavings = (amount) => {
-    savedCapital += amount;
-    updateFinancials();
+  window.modifyGoal = (index, amount) => {
+    savingsGoals[index].current += amount;
+    renderGoals();
     saveToCloud();
   }
 
-  window.injectCustomSavings = (isAdding) => {
-    let inputField = document.getElementById('custom-savings');
+  window.injectGoal = (index, isAdding) => {
+    let inputField = document.getElementById(`custom-goal-${index}`);
     let amount = parseInt(inputField.value);
     if (!isNaN(amount) && amount > 0) {
       let finalAmount = isAdding ? amount : -amount;
-      savedCapital += finalAmount;
-      inputField.value = ''; 
-      updateFinancials();
+      savingsGoals[index].current += finalAmount;
+      renderGoals();
       saveToCloud();
     }
   }
 
-  window.claimSavings = () => {
-    if (savedCapital >= savingTarget) {
-      savedCapital -= savingTarget;
-      updateFinancials();
+  window.claimGoal = (index) => {
+    if (savingsGoals[index].current >= savingsGoals[index].target) {
+      savingsGoals[index].current -= savingsGoals[index].target;
+      renderGoals();
+      saveToCloud();
+    }
+  }
+
+  window.deleteGoal = (index) => {
+    if (confirm("Are you sure you want to scrap this financial goal?")) {
+      savingsGoals.splice(index, 1);
+      renderGoals();
+      saveToCloud();
+    }
+  }
+
+  window.createGoal = () => {
+    let name = document.getElementById('new-goal-name').value;
+    let target = parseInt(document.getElementById('new-goal-target').value);
+    let reward = parseInt(document.getElementById('new-goal-reward').value);
+
+    if (name && !isNaN(target) && target > 0) {
+      let finalReward = isNaN(reward) ? 0 : reward;
+      savingsGoals.push({ id: Date.now().toString(), name: name, current: 0, target: target, reward: finalReward });
+      document.getElementById('new-goal-name').value = '';
+      document.getElementById('new-goal-target').value = '';
+      document.getElementById('new-goal-reward').value = '';
+      renderGoals();
       saveToCloud();
     }
   }
