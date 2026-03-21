@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>The Barter Ledger</title>
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+  body { 
+    background-color: #09090e; color: #e0e0f0; font-family: system-ui, -apple-system, sans-serif; 
+    margin: 0; padding: 20px; touch-action: manipulation;
+  }
+  h1 { 
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    text-align: center;
+    color: #ffffff; font-weight: 700; letter-spacing: 2px; border-bottom: 1px solid #2d244a; 
+    padding-bottom: 10px; text-shadow: 0 0 12px rgba(188, 19, 254, 0.6); text-transform: uppercase;
+  }
+  h2 { color: #bba2ff; font-weight: 400; font-size: 1.2rem; margin-top: 30px; border-bottom: 1px dashed #2d244a; padding-bottom: 5px; text-shadow: 0 0 8px rgba(187, 162, 255, 0.3); }
+  
+  .card { 
+    background: #11111a; padding: 15px; border-radius: 8px; margin-bottom: 15px; 
+    border: 1px solid #2a2244; position: relative;
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.05);
+  }
+  
+  .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .task-name { font-size: 1rem; color: #d5d6e2; }
+  .balance-display { font-size: 1.5rem; font-weight: bold; color: #fff; min-width: 30px; text-align: center; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+  
+  .btn { 
+    background: #1a1a2e; color: #fff; border: 1px solid #444; padding: 10px 15px; 
+    border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold;
+    flex: 1; margin: 0 5px; transition: all 0.2s ease; text-align: center;
+  }
+  
+  .btn-green { background: rgba(0, 136, 255, 0.1); border-color: #0088ff; color: #80c4ff; }
+  .btn-green:active { background: #0088ff; color: #fff; box-shadow: 0 0 15px #0088ff; }
+  
+  .btn-red { background: rgba(255, 0, 128, 0.1); border-color: #ff0080; color: #ff80c0; }
+  .btn-red:active { background: #ff0080; color: #fff; box-shadow: 0 0 15px #ff0080; }
+  
+  .btn-scrap {
+    background: transparent; border: 1px solid rgba(255, 0, 128, 0.5); color: #ff80c0; padding: 4px 10px; 
+    border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s ease;
+  }
+  .btn-scrap:hover, .btn-scrap:active { background: rgba(255, 0, 128, 0.2); box-shadow: 0 0 8px rgba(255, 0, 128, 0.6); color: #fff; }
+
+  .progress-bar { 
+    background: #09090e; border-radius: 4px; height: 12px; width: 100%; margin: 15px 0; 
+    overflow: hidden; border: 1px solid #2d244a; box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+  }
+  .progress-fill { 
+    background: linear-gradient(90deg, #0088ff, #ff0080); 
+    height: 100%; width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+    box-shadow: 0 0 12px rgba(255, 0, 128, 0.6);
+  }
+  
+  .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+  input { 
+    background: #09090e; border: 1px solid #2d244a; color: #e0e0f0; padding: 10px; 
+    border-radius: 6px; width: 100%; font-size: 1rem; box-sizing: border-box; transition: all 0.2s;
+  }
+  input:focus { outline: none; border-color: #0088ff; box-shadow: 0 0 8px rgba(0, 136, 255, 0.4); }
+
+  /* Screen toggles */
+  #app-screen { display: none; }
+  #auth-screen { display: block; max-width: 400px; margin: 60px auto; }
+</style>
+</head>
+<body>
+
+  <h1>The Barter Ledger</h1>
+
+  <div id="auth-screen" class="card">
+    <h2 style="text-align: center; margin-top: 0; border: none;">Access The Vault</h2>
+    <div class="input-group">
+      <input type="email" id="auth-email" placeholder="Email Address">
+    </div>
+    <div class="input-group">
+      <input type="password" id="auth-password" placeholder="Password">
+    </div>
+    <div class="flex-between" style="margin-top: 20px;">
+      <button class="btn btn-green" onclick="handleLogin()">Log In</button>
+      <button class="btn btn-red" onclick="handleRegister()">Register</button>
+    </div>
+    <div id="auth-error" style="color: #ff0080; text-align: center; margin-top: 15px; font-size: 0.85rem; height: 20px;"></div>
+  </div>
+
+  <div id="app-screen">
+    <h2>Capital Liquidation</h2>
+    <div class="card">
+      <div class="flex-between">
+        <span class="task-name">Save $300 to unlock $100 spending</span>
+        <span style="color: #7ab4ff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 136, 255, 0.4);">$<span id="savings-current">0</span> <span style="color: #555;">/ $300</span></span>
+      </div>
+      
+      <div class="progress-bar">
+        <div class="progress-fill" id="savings-bar"></div>
+      </div>
+      
+      <div class="flex-between" style="margin: 0 -5px;">
+        <button class="btn btn-green" onclick="addSavings(5)">+$5</button>
+        <button class="btn btn-green" onclick="addSavings(10)">+$10</button>
+        <button class="btn btn-green" onclick="addSavings(20)">+$20</button>
+      </div>
+      
+      <div class="input-group" style="margin-top: 10px;">
+        <input type="number" id="custom-savings" placeholder="Custom Amount">
+        <button class="btn btn-green" style="margin: 0; flex: 0.5;" onclick="injectCustomSavings(true)">Add</button>
+        <button class="btn btn-red" style="margin: 0; flex: 0.5;" onclick="injectCustomSavings(false)">Remove</button>
+      </div>
+      
+      <button class="btn btn-red" id="claim-savings-btn" style="display:none; width: 100%; margin: 15px 0 0 0;" onclick="claimSavings()">Claim $100 & Reset</button>
+      
+      <div class="flex-between" style="margin-top: 20px; border-top: 1px solid #2d244a; padding-top: 15px;">
+        <div style="color: #00e5ff; font-size: 1.1rem; font-weight: bold; text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);">
+          Fun Money: $<span id="liquid-cash">0</span>
+        </div>
+        <button class="btn btn-red" style="flex: 0 1 auto; padding: 6px 12px; font-size: 0.8rem;" onclick="spendLiquid(10)">Spend $10</button>
+      </div>
+      <div style="margin-top: 8px; text-align: left; color: #bba2ff; font-size: 0.85rem; text-shadow: 0 0 5px rgba(187, 162, 255, 0.2);">
+        Lifetime Capital Saved: $<span id="lifetime-saved">0</span>
+      </div>
+    </div>
+
+    <h2>Active Contracts</h2>
+    <div id="contracts-container"></div>
+
+    <h2>Forge New Contract</h2>
+    <div class="card" style="border-color: #2d244a;">
+      <div class="input-group">
+        <input type="text" id="new-task" placeholder="The Chore (e.g., Mow Lawn)">
+        <input type="text" id="new-reward" placeholder="The Reward (e.g., 1 Hour Gaming)">
+      </div>
+      <div class="input-group">
+        <input type="number" id="new-earn" placeholder="Earn amount" value="1" style="width: 50%;">
+        <input type="number" id="new-cost" placeholder="Claim cost" value="1" style="width: 50%;">
+      </div>
+      <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createContract()">Lock It In</button>
+    </div>
+
+    <button class="btn btn-red" style="width: 100%; margin-top: 30px; background: transparent; border-color: #ff0080;" onclick="handleLogout()">Log Out of Vault</button>
+  </div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // Your specific ignition keys
+  const firebaseConfig = {
+    apiKey: "AIzaSyCLuXhHumIHLHLhGqJl8NDh5VD-TmUO8fM",
+    authDomain: "barter-ledger-cloud.firebaseapp.com",
+    projectId: "barter-ledger-cloud",
+    storageBucket: "barter-ledger-cloud.firebasestorage.app",
+    messagingSenderId: "836849138330",
+    appId: "1:836849138330:web:aa937f2728aa0b678abd23",
+    measurementId: "G-6J6H37DCB8"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  
+  // Data State Variables
+  let savedCapital = 0;
+  let liquidCash = 0;
+  let lifetimeSaved = 0;
+  const savingTarget = 300;
+  let defaultContracts = [
+    { id: 'c1', task: 'Complete Workout', reward: 'Massage', balance: 0, earnRate: 1, costRate: 1 },
+    { id: 'c2', task: 'Morning Tea & Protein Lunch', reward: 'Liquor (oz)', balance: 0, earnRate: 4, costRate: 1 }
+  ];
+  let contracts = [];
+
+  // --- Authentication Logic ---
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUser = user;
+      document.getElementById('auth-screen').style.display = 'none';
+      document.getElementById('app-screen').style.display = 'block';
+      await loadCloudData();
+    } else {
+      currentUser = null;
+      document.getElementById('auth-screen').style.display = 'block';
+      document.getElementById('app-screen').style.display = 'none';
+    }
+  });
+
+  window.handleLogin = () => {
+    const e = document.getElementById('auth-email').value;
+    const p = document.getElementById('auth-password').value;
+    signInWithEmailAndPassword(auth, e, p).catch(error => {
+      document.getElementById('auth-error').innerText = "Access Denied: " + error.message;
+    });
+  };
+
+  window.handleRegister = () => {
+    const e = document.getElementById('auth-email').value;
+    const p = document.getElementById('auth-password').value;
+    createUserWithEmailAndPassword(auth, e, p).catch(error => {
+      document.getElementById('auth-error').innerText = "Registry Failed: " + error.message;
+    });
+  };
+
+  window.handleLogout = () => {
+    signOut(auth);
+  };
+
+  // --- Cloud Sync Logic ---
+  async function loadCloudData() {
+    if (!currentUser) return;
+    const docRef = doc(db, "ledgers", currentUser.uid);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      let data = docSnap.data();
+      savedCapital = data.savedCapital || 0;
+      liquidCash = data.liquidCash || 0;
+      lifetimeSaved = data.lifetimeSaved || 0;
+      contracts = data.contracts || defaultContracts;
+    } else {
+      // First time user, set defaults
+      contracts = defaultContracts;
+      saveToCloud(); 
+    }
+    updateFinancials();
+    renderContracts();
+  }
+
+  function saveToCloud() {
+    if (!currentUser) return;
+    const docRef = doc(db, "ledgers", currentUser.uid);
+    setDoc(docRef, {
+      savedCapital: savedCapital,
+      liquidCash: liquidCash,
+      lifetimeSaved: lifetimeSaved,
+      contracts: contracts
+    });
+  }
+
+  // --- Financial Mechanics ---
+  function updateFinancials() {
+    document.getElementById('savings-current').innerText = savedCapital;
+    document.getElementById('liquid-cash').innerText = liquidCash;
+    document.getElementById('lifetime-saved').innerText = lifetimeSaved;
+    let percent = Math.min((Math.max(savedCapital, 0) / savingTarget) * 100, 100);
+    document.getElementById('savings-bar').style.width = percent + '%';
+    
+    if (savedCapital >= savingTarget) {
+      document.getElementById('claim-savings-btn').style.display = 'block';
+    } else {
+      document.getElementById('claim-savings-btn').style.display = 'none';
+    }
+  }
+
+  window.addSavings = (amount) => {
+    savedCapital += amount;
+    lifetimeSaved += amount;
+    updateFinancials();
+    saveToCloud();
+  }
+
+  window.injectCustomSavings = (isAdding) => {
+    let inputField = document.getElementById('custom-savings');
+    let amount = parseInt(inputField.value);
+    if (!isNaN(amount) && amount > 0) {
+      let finalAmount = isAdding ? amount : -amount;
+      savedCapital += finalAmount;
+      lifetimeSaved += finalAmount;
+      inputField.value = ''; 
+      updateFinancials();
+      saveToCloud();
+    }
+  }
+
+  window.claimSavings = () => {
+    if (savedCapital >= savingTarget) {
+      savedCapital -= savingTarget;
+      liquidCash += 100; 
+      updateFinancials();
+      saveToCloud();
+    }
+  }
+
+  window.spendLiquid = (amount) => {
+    if (liquidCash >= amount) {
+      liquidCash -= amount;
+      updateFinancials();
+      saveToCloud();
+    }
+  }
+
+  // --- Barter Mechanics ---
+  function renderContracts() {
+    const container = document.getElementById('contracts-container');
+    container.innerHTML = '';
+
+    contracts.forEach((contract, index) => {
+      let earn = contract.earnRate || 1;
+      let cost = contract.costRate || 1;
+      let bal = contract.balance || 0;
+      let taskName = contract.task || "Unknown Task";
+      let rewardName = contract.reward || "Reward";
+
+      container.innerHTML += `
+        <div class="card">
+          <div class="flex-between" style="border-bottom: 1px solid #2d244a; padding-bottom: 8px; margin-bottom: 12px;">
+            <span style="color: #bba2ff; font-size: 0.9rem;">${taskName} <span style="color: #555;">=</span> ${earn} ${rewardName}</span>
+            <button class="btn-scrap" onclick="deleteContract(${index})">Scrap</button>
+          </div>
+          <div class="flex-between">
+            <button class="btn btn-green" onclick="modifyBalance(${index}, ${earn})">Completed Task</button>
+            <span class="balance-display">${bal}</span>
+            <button class="btn btn-red" onclick="modifyBalance(${index}, -${cost})">Claim Reward</button>
+          </div>
+          <div style="text-align: center; margin-top: 8px; color: #7ab4ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">
+            Inventory: ${rewardName}
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  window.modifyBalance = (index, amount) => {
+    let currentBal = contracts[index].balance || 0;
+    if (currentBal + amount >= 0) {
+      contracts[index].balance = currentBal + amount;
+      renderContracts();
+      saveToCloud();
+    }
+  }
+
+  window.deleteContract = (index) => {
+    if (confirm("Are you sure you want to scrap this contract permanently?")) {
+      contracts.splice(index, 1);
+      renderContracts();
+      saveToCloud();
+    }
+  }
+
+  window.createContract = () => {
+    let task = document.getElementById('new-task').value;
+    let reward = document.getElementById('new-reward').value;
+    let earn = parseInt(document.getElementById('new-earn').value) || 1;
+    let cost = parseInt(document.getElementById('new-cost').value) || 1;
+
+    if (task && reward) {
+      contracts.push({ id: Date.now().toString(), task: task, reward: reward, balance: 0, earnRate: earn, costRate: cost });
+      document.getElementById('new-task').value = '';
+      document.getElementById('new-reward').value = '';
+      document.getElementById('new-earn').value = '1';
+      document.getElementById('new-cost').value = '1';
+      renderContracts();
+      saveToCloud();
+    }
+  }
+</script>
+</body>
+</html>
