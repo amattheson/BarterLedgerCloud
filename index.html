@@ -76,6 +76,9 @@
   .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; }
   .checkbox-wrapper input { width: 20px; height: 20px; cursor: pointer; accent-color: #0088ff; }
 
+  .drawer-btn { background: #11111a; border: 1px solid #2d244a; color: #bba2ff; width: 100%; margin: 0 0 10px 0; padding: 12px; border-radius: 6px; font-weight: bold; text-align: left; cursor: pointer; }
+  .drawer-btn:hover { background: #1a1a2e; }
+
   #app-screen { display: none; }
   #auth-screen { display: block; max-width: 400px; margin: 60px auto; }
   #settings-panel { display: none; }
@@ -97,13 +100,13 @@
     <div id="settings-panel" class="card" style="border-color: #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.2);">
       <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
       
-      <label class="checkbox-wrapper" style="margin-bottom: 15px;">
+      <label class="checkbox-wrapper" style="margin-bottom: 20px;">
         <input type="checkbox" id="toggle-savings-module" onchange="toggleModuleVisibility()">
         Power to Capital Liquidation Module
       </label>
       
-      <div style="margin-bottom: 15px; border-top: 1px dashed #2d244a; padding-top: 15px;">
-        <div style="color: #bba2ff; font-size: 0.9rem; margin-bottom: 10px;">Forge New Capital Goal:</div>
+      <button class="drawer-btn" onclick="toggleDrawer('goal-drawer')">+ Forge New Capital Goal</button>
+      <div id="goal-drawer" style="display: none; padding: 10px 0 15px 0; border-left: 2px solid #0088ff; padding-left: 10px; margin-bottom: 10px;">
         <div class="input-group">
           <input type="text" id="new-goal-name" placeholder="Goal Name (e.g., CDL Fees)">
         </div>
@@ -114,11 +117,24 @@
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
 
-      <div style="margin-bottom: 15px; border-top: 1px dashed #ff0080; padding-top: 15px;">
-        <button class="btn btn-scrap" style="width: 100%; border-color: #ff0080; color: #ff0080; font-size: 0.9rem; padding: 10px;" onclick="resetToDefaultGoals()">Nuclear Option: Reset to OEM Goals</button>
+      <button class="drawer-btn" onclick="toggleDrawer('contract-drawer')">+ Forge New Contract</button>
+      <div id="contract-drawer" style="display: none; padding: 10px 0 15px 0; border-left: 2px solid #ff0080; padding-left: 10px; margin-bottom: 10px;">
+        <div class="input-group">
+          <input type="text" id="new-task" placeholder="The Chore (e.g., Walk a mile)">
+          <input type="text" id="new-reward" placeholder="The Reward (e.g., Snack)">
+        </div>
+        <div class="input-group">
+          <input type="number" id="new-earn" placeholder="Earn amt" value="1" style="width: 50%;">
+          <input type="number" id="new-cost" placeholder="Claim cost" value="1" style="width: 50%;">
+        </div>
+        <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createContract()">Lock It In</button>
       </div>
 
-      <button class="btn btn-red" style="width: 100%; margin: 0;" onclick="closeSettings()">Close Panel</button>
+      <div style="margin-top: 20px; border-top: 1px dashed #ff0080; padding-top: 15px;">
+        <button class="btn btn-scrap" style="width: 100%; border-color: #ff0080; color: #ff0080; font-size: 0.9rem; padding: 10px;" onclick="resetToOEM()">Nuclear Option: Reset Everything to OEM</button>
+      </div>
+
+      <button class="btn btn-red" style="width: 100%; margin: 20px 0 0 0;" onclick="closeSettings()">Close Panel</button>
     </div>
 
     <div id="savings-wrapper">
@@ -128,19 +144,6 @@
 
     <h2>Active Contracts</h2>
     <div id="contracts-container"></div>
-
-    <h2>Forge New Contract</h2>
-    <div class="card" style="border-color: #2d244a;">
-      <div class="input-group">
-        <input type="text" id="new-task" placeholder="The Chore (e.g., Walk a mile)">
-        <input type="text" id="new-reward" placeholder="The Reward (e.g., Snack)">
-      </div>
-      <div class="input-group">
-        <input type="number" id="new-earn" placeholder="Earn amt" value="1" style="width: 50%;">
-        <input type="number" id="new-cost" placeholder="Claim cost" value="1" style="width: 50%;">
-      </div>
-      <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createContract()">Lock It In</button>
-    </div>
 
     <div class="flex-between" style="margin-top: 30px;">
       <button class="btn" style="background: transparent; border-color: #0088ff; color: #0088ff;" onclick="openSettings()">Configure Dashboard</button>
@@ -244,6 +247,13 @@
   
   window.closeSettings = () => { 
     document.getElementById('settings-panel').style.display = 'none'; 
+    document.getElementById('goal-drawer').style.display = 'none';
+    document.getElementById('contract-drawer').style.display = 'none';
+  };
+
+  window.toggleDrawer = (drawerId) => {
+    const drawer = document.getElementById(drawerId);
+    drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
   };
 
   window.toggleModuleVisibility = () => {
@@ -257,11 +267,16 @@
     document.getElementById('savings-wrapper').style.display = showSavingsModule ? 'block' : 'none';
   }
 
-  window.resetToDefaultGoals = () => {
-    if (confirm("WARNING: This will completely obliterate your current goals and reset to the factory baseline. Do you wish to proceed?")) {
+  window.resetToOEM = () => {
+    if (confirm("CRITICAL WARNING: This will completely obliterate BOTH your current savings goals AND your active contracts, resetting the entire board. Do you wish to proceed?")) {
       savingsGoals = JSON.parse(JSON.stringify(defaultGoals));
       savingsGoals.forEach(g => g.id = Date.now().toString() + Math.floor(Math.random() * 1000));
+      
+      contracts = JSON.parse(JSON.stringify(defaultContracts));
+      contracts.forEach(c => c.id = Date.now().toString() + Math.floor(Math.random() * 1000));
+      
       renderGoals();
+      renderContracts();
       saveToCloud();
       closeSettings();
     }
@@ -271,6 +286,11 @@
   function renderGoals() {
     const container = document.getElementById('savings-container');
     container.innerHTML = '';
+
+    if (savingsGoals.length === 0) {
+        container.innerHTML = '<div style="color: #555; font-size: 0.9rem; font-style: italic;">No active goals. Forge a new one in the dashboard settings.</div>';
+        return;
+    }
 
     savingsGoals.forEach((goal, index) => {
       let percent = Math.min((Math.max(goal.current, 0) / goal.target) * 100, 100);
@@ -368,6 +388,11 @@
     const container = document.getElementById('contracts-container');
     container.innerHTML = '';
 
+    if (contracts.length === 0) {
+        container.innerHTML = '<div style="color: #555; font-size: 0.9rem; font-style: italic;">No active contracts. Forge a new one in the dashboard settings.</div>';
+        return;
+    }
+
     contracts.forEach((contract, index) => {
       let earn = contract.earnRate || 1;
       let cost = contract.costRate || 1;
@@ -425,6 +450,7 @@
       document.getElementById('new-cost').value = '1';
       renderContracts();
       saveToCloud();
+      closeSettings();
     }
   }
 </script>
