@@ -46,6 +46,9 @@
   
   .btn-red { background: rgba(255, 0, 128, 0.1); border-color: #ff0080; color: #ff80c0; }
   .btn-red:active { background: #ff0080; color: #fff; box-shadow: 0 0 15px #ff0080; }
+
+  .btn-google { background: #e0e0f0; color: #09090e; border-color: #fff; margin-top: 15px; width: 100%; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+  .btn-google:active { background: #fff; box-shadow: 0 0 15px #fff; }
   
   .btn-scrap {
     background: transparent; border: 1px solid rgba(255, 0, 128, 0.5); color: #ff80c0; padding: 4px 10px; 
@@ -70,9 +73,13 @@
   }
   input:focus { outline: none; border-color: #0088ff; box-shadow: 0 0 8px rgba(0, 136, 255, 0.4); }
 
-  /* Screen toggles */
+  /* Custom Checkbox */
+  .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; }
+  .checkbox-wrapper input { width: 20px; height: 20px; cursor: pointer; accent-color: #0088ff; }
+
   #app-screen { display: none; }
   #auth-screen { display: block; max-width: 400px; margin: 60px auto; }
+  #settings-panel { display: none; }
 </style>
 </head>
 <body>
@@ -91,43 +98,58 @@
       <button class="btn btn-green" onclick="handleLogin()">Log In</button>
       <button class="btn btn-red" onclick="handleRegister()">Register</button>
     </div>
+    <div style="text-align: center; margin: 15px 0; color: #555; font-size: 0.9rem;">— OR —</div>
+    <button class="btn btn-google" onclick="handleGoogleLogin()">Authenticate with Google</button>
+    
     <div id="auth-error" style="color: #ff0080; text-align: center; margin-top: 15px; font-size: 0.85rem; height: 20px;"></div>
   </div>
 
   <div id="app-screen">
-    <h2>Capital Liquidation</h2>
-    <div class="card">
-      <div class="flex-between">
-        <span class="task-name">Save $300 to unlock $100 spending</span>
-        <span style="color: #7ab4ff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 136, 255, 0.4);">$<span id="savings-current">0</span> <span style="color: #555;">/ $300</span></span>
-      </div>
-      
-      <div class="progress-bar">
-        <div class="progress-fill" id="savings-bar"></div>
-      </div>
-      
-      <div class="flex-between" style="margin: 0 -5px;">
-        <button class="btn btn-green" onclick="addSavings(5)">+$5</button>
-        <button class="btn btn-green" onclick="addSavings(10)">+$10</button>
-        <button class="btn btn-green" onclick="addSavings(20)">+$20</button>
-      </div>
-      
-      <div class="input-group" style="margin-top: 10px;">
-        <input type="number" id="custom-savings" placeholder="Custom Amount">
-        <button class="btn btn-green" style="margin: 0; flex: 0.5;" onclick="injectCustomSavings(true)">Add</button>
-        <button class="btn btn-red" style="margin: 0; flex: 0.5;" onclick="injectCustomSavings(false)">Remove</button>
-      </div>
-      
-      <button class="btn btn-red" id="claim-savings-btn" style="display:none; width: 100%; margin: 15px 0 0 0;" onclick="claimSavings()">Claim $100 & Reset</button>
-      
-      <div class="flex-between" style="margin-top: 20px; border-top: 1px solid #2d244a; padding-top: 15px;">
-        <div style="color: #00e5ff; font-size: 1.1rem; font-weight: bold; text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);">
-          Fun Money: $<span id="liquid-cash">0</span>
+    
+    <div id="settings-panel" class="card" style="border-color: #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.2);">
+      <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
+      <label class="checkbox-wrapper" style="margin-bottom: 15px;">
+        <input type="checkbox" id="toggle-savings-module" onchange="toggleModuleVisibility()">
+        Power to Capital Liquidation Module
+      </label>
+      <button class="btn btn-red" style="width: 100%; margin: 0;" onclick="closeSettings()">Close Panel</button>
+    </div>
+
+    <div id="savings-module">
+      <h2>Capital Liquidation</h2>
+      <div class="card">
+        <div class="flex-between">
+          <span class="task-name">Save $300 to unlock $100 spending</span>
+          <span style="color: #7ab4ff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 136, 255, 0.4);">$<span id="savings-current">0</span> <span style="color: #555;">/ $300</span></span>
         </div>
-        <button class="btn btn-red" style="flex: 0 1 auto; padding: 6px 12px; font-size: 0.8rem;" onclick="spendLiquid(10)">Spend $10</button>
-      </div>
-      <div style="margin-top: 8px; text-align: left; color: #bba2ff; font-size: 0.85rem; text-shadow: 0 0 5px rgba(187, 162, 255, 0.2);">
-        Lifetime Capital Saved: $<span id="lifetime-saved">0</span>
+        
+        <div class="progress-bar">
+          <div class="progress-fill" id="savings-bar"></div>
+        </div>
+        
+        <div class="flex-between" style="margin: 0 -5px;">
+          <button class="btn btn-green" onclick="addSavings(5)">+$5</button>
+          <button class="btn btn-green" onclick="addSavings(10)">+$10</button>
+          <button class="btn btn-green" onclick="addSavings(20)">+$20</button>
+        </div>
+        
+        <div class="input-group" style="margin-top: 10px;">
+          <input type="number" id="custom-savings" placeholder="Custom Amount">
+          <button class="btn btn-green" style="margin: 0; flex: 0.5;" onclick="injectCustomSavings(true)">Add</button>
+          <button class="btn btn-red" style="margin: 0; flex: 0.5;" onclick="injectCustomSavings(false)">Remove</button>
+        </div>
+        
+        <button class="btn btn-red" id="claim-savings-btn" style="display:none; width: 100%; margin: 15px 0 0 0;" onclick="claimSavings()">Claim $100 & Reset</button>
+        
+        <div class="flex-between" style="margin-top: 20px; border-top: 1px solid #2d244a; padding-top: 15px;">
+          <div style="color: #00e5ff; font-size: 1.1rem; font-weight: bold; text-shadow: 0 0 8px rgba(0, 229, 255, 0.5);">
+            Fun Money: $<span id="liquid-cash">0</span>
+          </div>
+          <button class="btn btn-red" style="flex: 0 1 auto; padding: 6px 12px; font-size: 0.8rem;" onclick="spendLiquid(10)">Spend $10</button>
+        </div>
+        <div style="margin-top: 8px; text-align: left; color: #bba2ff; font-size: 0.85rem; text-shadow: 0 0 5px rgba(187, 162, 255, 0.2);">
+          Lifetime Capital Saved: $<span id="lifetime-saved">0</span>
+        </div>
       </div>
     </div>
 
@@ -141,21 +163,23 @@
         <input type="text" id="new-reward" placeholder="The Reward (e.g., 1 Hour Gaming)">
       </div>
       <div class="input-group">
-        <input type="number" id="new-earn" placeholder="Earn amount" value="1" style="width: 50%;">
+        <input type="number" id="new-earn" placeholder="Earn amt" value="1" style="width: 50%;">
         <input type="number" id="new-cost" placeholder="Claim cost" value="1" style="width: 50%;">
       </div>
       <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createContract()">Lock It In</button>
     </div>
 
-    <button class="btn btn-red" style="width: 100%; margin-top: 30px; background: transparent; border-color: #ff0080;" onclick="handleLogout()">Log Out of Vault</button>
+    <div class="flex-between" style="margin-top: 30px;">
+      <button class="btn" style="background: transparent; border-color: #0088ff; color: #0088ff;" onclick="openSettings()">Configure Dashboard</button>
+      <button class="btn btn-red" style="background: transparent; border-color: #ff0080;" onclick="handleLogout()">Log Out</button>
+    </div>
   </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
   import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  // Your specific ignition keys
   const firebaseConfig = {
     apiKey: "AIzaSyCLuXhHumIHLHLhGqJl8NDh5VD-TmUO8fM",
     authDomain: "barter-ledger-cloud.firebaseapp.com",
@@ -169,21 +193,24 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
+  const googleProvider = new GoogleAuthProvider();
 
   let currentUser = null;
   
-  // Data State Variables
+  // Data State
   let savedCapital = 0;
   let liquidCash = 0;
   let lifetimeSaved = 0;
+  let showSavingsModule = true; // Default toggle state
   const savingTarget = 300;
+  
   let defaultContracts = [
     { id: 'c1', task: 'Complete Workout', reward: 'Massage', balance: 0, earnRate: 1, costRate: 1 },
     { id: 'c2', task: 'Morning Tea & Protein Lunch', reward: 'Liquor (oz)', balance: 0, earnRate: 4, costRate: 1 }
   ];
   let contracts = [];
 
-  // --- Authentication Logic ---
+  // --- Authentication ---
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
@@ -201,7 +228,7 @@
     const e = document.getElementById('auth-email').value;
     const p = document.getElementById('auth-password').value;
     signInWithEmailAndPassword(auth, e, p).catch(error => {
-      document.getElementById('auth-error').innerText = "Access Denied: " + error.message;
+      document.getElementById('auth-error').innerText = error.message;
     });
   };
 
@@ -209,15 +236,19 @@
     const e = document.getElementById('auth-email').value;
     const p = document.getElementById('auth-password').value;
     createUserWithEmailAndPassword(auth, e, p).catch(error => {
-      document.getElementById('auth-error').innerText = "Registry Failed: " + error.message;
+      document.getElementById('auth-error').innerText = error.message;
     });
   };
 
-  window.handleLogout = () => {
-    signOut(auth);
+  window.handleGoogleLogin = () => {
+    signInWithPopup(auth, googleProvider).catch(error => {
+      document.getElementById('auth-error').innerText = "Google Auth Failed: " + error.message;
+    });
   };
 
-  // --- Cloud Sync Logic ---
+  window.handleLogout = () => { signOut(auth); };
+
+  // --- Cloud Sync ---
   async function loadCloudData() {
     if (!currentUser) return;
     const docRef = doc(db, "ledgers", currentUser.uid);
@@ -229,11 +260,15 @@
       liquidCash = data.liquidCash || 0;
       lifetimeSaved = data.lifetimeSaved || 0;
       contracts = data.contracts || defaultContracts;
+      
+      // Load UI settings
+      showSavingsModule = data.showSavingsModule !== false; 
     } else {
-      // First time user, set defaults
       contracts = defaultContracts;
       saveToCloud(); 
     }
+    
+    applySettingsToUI();
     updateFinancials();
     renderContracts();
   }
@@ -245,8 +280,24 @@
       savedCapital: savedCapital,
       liquidCash: liquidCash,
       lifetimeSaved: lifetimeSaved,
-      contracts: contracts
+      contracts: contracts,
+      showSavingsModule: showSavingsModule
     });
+  }
+
+  // --- Settings Panel Logic ---
+  window.openSettings = () => { document.getElementById('settings-panel').style.display = 'block'; };
+  window.closeSettings = () => { document.getElementById('settings-panel').style.display = 'none'; };
+
+  window.toggleModuleVisibility = () => {
+    showSavingsModule = document.getElementById('toggle-savings-module').checked;
+    applySettingsToUI();
+    saveToCloud();
+  }
+
+  function applySettingsToUI() {
+    document.getElementById('toggle-savings-module').checked = showSavingsModule;
+    document.getElementById('savings-module').style.display = showSavingsModule ? 'block' : 'none';
   }
 
   // --- Financial Mechanics ---
