@@ -96,18 +96,13 @@
     
     <div id="settings-panel" class="card" style="border-color: #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.2);">
       <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
+      
       <label class="checkbox-wrapper" style="margin-bottom: 15px;">
         <input type="checkbox" id="toggle-savings-module" onchange="toggleModuleVisibility()">
         Power to Capital Liquidation Module
       </label>
-      <button class="btn btn-red" style="width: 100%; margin: 0;" onclick="closeSettings()">Close Panel</button>
-    </div>
-
-    <div id="savings-wrapper">
-      <h2>Capital Liquidation</h2>
-      <div id="savings-container"></div>
       
-      <div class="card" style="border-color: #2d244a; margin-top: 15px;">
+      <div style="margin-bottom: 15px; border-top: 1px dashed #2d244a; padding-top: 15px;">
         <div style="color: #bba2ff; font-size: 0.9rem; margin-bottom: 10px;">Forge New Capital Goal:</div>
         <div class="input-group">
           <input type="text" id="new-goal-name" placeholder="Goal Name (e.g., CDL Fees)">
@@ -118,6 +113,13 @@
         </div>
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
+
+      <button class="btn btn-red" style="width: 100%; margin: 0;" onclick="closeSettings()">Close Panel</button>
+    </div>
+
+    <div id="savings-wrapper">
+      <h2>Capital Liquidation</h2>
+      <div id="savings-container"></div>
     </div>
 
     <h2>Active Contracts</h2>
@@ -172,9 +174,9 @@
   ];
   let contracts = [];
 
+  // Updated single default goal
   let defaultGoals = [
-    { id: 'g1', name: 'ASE Certification Fund', current: 0, target: 150, reward: 50 },
-    { id: 'g2', name: 'ICON Hand Tools', current: 0, target: 200, reward: 100 }
+    { id: 'g1', name: "Family Saving's", current: 0, target: 100, reward: 50 }
   ];
   let savingsGoals = [];
 
@@ -233,8 +235,13 @@
   }
 
   // --- Settings Panel Logic ---
-  window.openSettings = () => { document.getElementById('settings-panel').style.display = 'block'; };
-  window.closeSettings = () => { document.getElementById('settings-panel').style.display = 'none'; };
+  window.openSettings = () => { 
+    document.getElementById('settings-panel').style.display = 'block'; 
+  };
+  
+  window.closeSettings = () => { 
+    document.getElementById('settings-panel').style.display = 'none'; 
+  };
 
   window.toggleModuleVisibility = () => {
     showSavingsModule = document.getElementById('toggle-savings-module').checked;
@@ -302,6 +309,7 @@
     if (!isNaN(amount) && amount > 0) {
       let finalAmount = isAdding ? amount : -amount;
       savingsGoals[index].current += finalAmount;
+      inputField.value = '';
       renderGoals();
       saveToCloud();
     }
@@ -331,11 +339,14 @@
     if (name && !isNaN(target) && target > 0) {
       let finalReward = isNaN(reward) ? 0 : reward;
       savingsGoals.push({ id: Date.now().toString(), name: name, current: 0, target: target, reward: finalReward });
+      
       document.getElementById('new-goal-name').value = '';
       document.getElementById('new-goal-target').value = '';
       document.getElementById('new-goal-reward').value = '';
+      
       renderGoals();
       saveToCloud();
+      closeSettings();
     }
   }
 
