@@ -197,7 +197,7 @@
   function updateUserDisplay(user) {
     const info = document.getElementById('user-info');
     const img = document.getElementById('user-img');
-    info.innerText = `Vault synced: ${user.displayName || user.email}`;
+    info.innerText = `Vault synced: ${user.email || user.displayName}`;
     if (user.photoURL) {
       img.src = user.photoURL;
       img.style.display = 'block';
