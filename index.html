@@ -17,24 +17,19 @@
 <style>
   body { 
     background-color: #09090e; color: #e0e0f0; font-family: system-ui, -apple-system, sans-serif; 
-    margin: 0; padding: 80px 20px 20px 20px; /* Increased top padding to clear the fixed header */
+    margin: 0; padding: 100px 20px 20px 20px; /* Padding top to clear sticky H1 */
     touch-action: manipulation;
   }
+  
+  /* STICKY HEADER */
   h1 { 
     font-family: 'Cinzel', serif; font-size: 1.6rem; text-align: center; color: #ffffff; font-weight: 700; 
-    letter-spacing: 2px; border-bottom: 1px solid #2d244a; padding: 15px 0; 
+    letter-spacing: 2px; border-bottom: 1px solid #2d244a; padding: 20px 0; 
     text-shadow: 0 0 12px rgba(188, 19, 254, 0.6); text-transform: uppercase;
-    
-    /* Fixed Header Logic */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #09090e; /* Solid background so content scrolls behind it */
-    z-index: 1000; /* Keeps it on the top layer */
-    margin: 0;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8); /* Adds depth to the separation */
+    position: fixed; top: 0; left: 0; width: 100%; background-color: #09090e;
+    z-index: 1000; margin: 0; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
   }
+
   h2 { color: #bba2ff; font-weight: 400; font-size: 1.2rem; margin-top: 30px; border-bottom: 1px dashed #2d244a; padding-bottom: 5px; text-shadow: 0 0 8px rgba(187, 162, 255, 0.3); }
   
   .card { 
@@ -43,7 +38,6 @@
   }
   
   .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .task-name { font-size: 1rem; color: #d5d6e2; }
   .balance-display { font-size: 1.5rem; font-weight: bold; color: #fff; min-width: 30px; text-align: center; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
   
   .btn { 
@@ -66,51 +60,26 @@
   .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
   input { background: #09090e; border: 1px solid #2d244a; color: #e0e0f0; padding: 10px; border-radius: 6px; width: 100%; font-size: 1rem; box-sizing: border-box; }
 
-  .checkbox-wrapper { 
-    display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; font-size: 0.9rem; flex-wrap: nowrap; /* Keep them on one line */ width: 100%; margin-top: 5px;
-  }
-  .checkbox-wrapper input { 
-    flex-shrink: 0; /* Prevents the checkbox from getting squished */
-    width: 20px; 
-    height: 20px; 
-    cursor: pointer; 
-    accent-color: #0088ff; 
-    margin: 0;
-  }
-  .checkbox-text {
-    white-space: nowrap; /* Keeps text from breaking weirdly */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Adds ... if it still won't fit */
-  }
+  .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; font-size: 0.9rem; margin-bottom: 15px; }
+  .checkbox-wrapper input { width: 20px; height: 20px; flex-shrink: 0; accent-color: #0088ff; }
+
   .drawer-btn { background: #11111a; border: 1px solid #2d244a; color: #bba2ff; width: 100%; margin: 0 0 10px 0; padding: 12px; border-radius: 6px; font-weight: bold; text-align: left; cursor: pointer; }
 
-  /* New User Profile Style */
-  .user-profile {
-    display: flex; align-items: center; gap: 12px; margin-top: 20px; padding-top: 15px; 
-    border-top: 1px solid #2d244a; color: #888; font-size: 0.85rem;
-  }
-  .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #0088ff; }
-
-  #app-screen { 
-    display: none; 
-    margin-top: 20px; 
-  }
-  #auth-screen { display: block; max-width: 400px; margin: 60px auto; }
+  /* OVERRIDE SETTINGS PANEL */
   #settings-panel { 
     display: none; 
-    position: fixed; /* Make the panel stay put while you scroll through it */
-    top: 85px;       /* Pushes it down so it doesn't hide behind the header */
-    left: 20px; 
-    right: 20px; 
-    max-height: calc(100vh - 120px); /* Keeps it from going off the bottom of the screen */
-    overflow-y: auto; /* Allows you to scroll within the panel if it gets long */
-    z-index: 2000;    /* Higher than the 1000 we gave the H1 header */
-    background: #11111a; 
-    border: 1px solid #0088ff; 
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 136, 255, 0.2);
-    padding: 20px;
-    border-radius: 8px;
+    position: fixed; top: 10%; left: 10px; right: 10px; 
+    max-height: 80vh; overflow-y: auto; 
+    background: #11111a; z-index: 2000; /* Higher than H1 */
+    border: 1px solid #0088ff; border-radius: 8px; padding: 20px;
+    box-shadow: 0 0 40px rgba(0,0,0,1);
   }
+
+  .user-profile { display: flex; align-items: center; gap: 12px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #2d244a; color: #888; font-size: 0.85rem; }
+  .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #0088ff; }
+
+  #app-screen { display: none; }
+  #auth-screen { display: block; max-width: 400px; margin: 60px auto; }
 </style>
 </head>
 <body>
@@ -126,7 +95,7 @@
 
   <div id="app-screen">
     
-    <div id="settings-panel" class="card" style="border-color: #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.2);">
+    <div id="settings-panel">
       <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
       
       <button class="drawer-btn" onclick="toggleDrawer('goal-drawer')">+ Forge New Goal</button>
@@ -138,9 +107,8 @@
           <input type="number" id="new-goal-target" placeholder="Target Quantity" style="width: 50%;">
           <input type="number" id="new-goal-reward" placeholder="Reward Quantity" style="width: 50%;">
         </div>
-        <label class="checkbox-wrapper" style="margin-bottom: 10px;">
-            <input type="checkbox" id="new-goal-is-currency" checked>
-            <span class="checkbox-text">Use Currency ($)</span>
+        <label class="checkbox-wrapper">
+            <input type="checkbox" id="new-goal-is-currency" checked> <span>Use Currency ($)</span>
         </label>
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
@@ -165,13 +133,13 @@
 
       <button class="drawer-btn" style="color: #0088ff; border-color: rgba(0, 136, 255, 0.3);" onclick="toggleDrawer('install-drawer')">📲 Install to Home Screen</button>
       <div id="install-drawer" style="display: none; padding: 10px; border-left: 2px solid #0088ff; margin-bottom: 10px; font-size: 0.85rem; color: #bba2ff;">
-        <p><strong>iOS/Safari:</strong> Tap the <span style="color:#fff;">Share icon</span> and select <span style="color:#fff;">"Add to Home Screen"</span>.</p>
-        <p><strong>Android/Chrome:</strong> Tap the <span style="color:#fff;">three dots (⋮)</span> and select <span style="color:#fff;">"Install app"</span>.</p>
+        <p><strong>iOS/Safari:</strong> Tap <span style="color:#fff;">Share</span> and select <span style="color:#fff;">"Add to Home Screen"</span>.</p>
+        <p><strong>Android:</strong> Tap <span style="color:#fff;">(⋮)</span> and select <span style="color:#fff;">"Install app"</span>.</p>
       </div>
 
       <div id="user-display" class="user-profile">
         <img id="user-img" class="user-avatar" src="" alt="" style="display: none;">
-        <span id="user-info">Sync Active: Guest</span>
+        <span id="user-info">Sync Active</span>
       </div>
 
       <button class="btn btn-red" style="width: 100%; margin: 15px 0 0 0;" onclick="closeSettings()">Close Panel</button>
@@ -212,13 +180,11 @@
   const googleProvider = new GoogleAuthProvider();
 
   let currentUser = null;
-  
   let defaultContracts = [
     { id: 'c1', task: 'Walk a mile', reward: 'Have a snack', balance: 0, earnRate: 1, costRate: 1 },
     { id: 'c2', task: 'Study for 1 hour', reward: 'YouTube for 10 min', balance: 0, earnRate: 1, costRate: 1 }
   ];
   let contracts = [];
-
   let defaultGoals = [
     { id: 'g1', name: "Personal Budget", current: 0, target: 100, reward: 50, isCurrency: true }
   ];
@@ -242,10 +208,7 @@
     const info = document.getElementById('user-info');
     const img = document.getElementById('user-img');
     info.innerText = `Vault synced: ${user.email || user.displayName}`;
-    if (user.photoURL) {
-      img.src = user.photoURL;
-      img.style.display = 'block';
-    }
+    if (user.photoURL) { img.src = user.photoURL; img.style.display = 'block'; }
   }
 
   window.handleGoogleLogin = () => { signInWithPopup(auth, googleProvider); };
@@ -264,8 +227,7 @@
       savingsGoals = defaultGoals;
       saveToCloud(); 
     }
-    renderGoals();
-    renderContracts();
+    renderGoals(); renderContracts();
   }
 
   function saveToCloud() {
