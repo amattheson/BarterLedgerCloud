@@ -15,18 +15,15 @@
 <style>
   body { 
     background-color: #09090e; color: #e0e0f0; font-family: system-ui, -apple-system, sans-serif; 
-    margin: 0; padding: 110px 20px 20px 20px; /* Clears the fixed header */
-    touch-action: manipulation;
+    margin: 0; padding: 110px 20px 40px 20px; touch-action: manipulation;
   }
   
-  /* STICKY HEADER */
   h1 { 
     font-family: 'Cinzel', serif; font-size: 1.6rem; text-align: center; color: #ffffff; font-weight: 700; 
     letter-spacing: 2px; border-bottom: 1px solid #2d244a; padding: 25px 0; 
     text-shadow: 0 0 12px rgba(188, 19, 254, 0.6); text-transform: uppercase;
-    position: fixed; top: 0; left: 0; width: 100%; background-color: rgba(9, 9, 14, 0.95);
+    position: fixed; top: 0; left: 0; width: 100%; background-color: #09090e;
     z-index: 1000; margin: 0; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px); /* Makes the header look premium */
   }
 
   h2 { color: #bba2ff; font-weight: 400; font-size: 1.2rem; margin-top: 30px; border-bottom: 1px dashed #2d244a; padding-bottom: 5px; }
@@ -52,59 +49,49 @@
   .progress-bar { background: #09090e; border-radius: 4px; height: 12px; width: 100%; margin: 15px 0; overflow: hidden; border: 1px solid #2d244a; }
   .progress-fill { background: linear-gradient(90deg, #0088ff, #ff0080); height: 100%; width: 0%; transition: width 0.4s ease; }
   
-  .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
-  input { background: #09090e; border: 1px solid #2d244a; color: #e0e0f0; padding: 12px; border-radius: 6px; width: 100%; font-size: 1rem; box-sizing: border-box; }
-
-  .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; font-size: 0.9rem; margin-bottom: 15px; }
-  .checkbox-wrapper input { width: 22px; height: 22px; flex-shrink: 0; accent-color: #0088ff; }
+  input { background: #09090e; border: 1px solid #2d244a; color: #e0e0f0; padding: 12px; border-radius: 6px; width: 100%; font-size: 1rem; box-sizing: border-box; margin-bottom: 10px; }
 
   .drawer-btn { background: #11111a; border: 1px solid #2d244a; color: #bba2ff; width: 100%; margin: 0 0 10px 0; padding: 14px; border-radius: 6px; font-weight: bold; text-align: left; cursor: pointer; }
 
-  /* THE FIXED OVERLAY PANEL */
+  /* FULL SCREEN CONFIG PANEL */
   #settings-panel { 
     display: none; 
     position: fixed; 
-    top: 50%; left: 50%; transform: translate(-50%, -50%); /* Centers perfectly */
-    width: 90%; 
-    max-width: 450px;
-    max-height: 85vh; 
-    overflow-y: auto; 
-    background: #11111a; 
-    z-index: 5000; /* Extremely high to beat any other element */
-    border: 1px solid #0088ff; 
-    border-radius: 12px; 
-    padding: 25px;
-    box-shadow: 0 0 50px rgba(0,0,0,1), 0 0 20px rgba(0, 136, 255, 0.3);
+    top: 0; left: 0; width: 100%; height: 100%; 
+    background: #09090e; 
+    z-index: 5000; 
+    padding: 100px 20px 40px 20px;
     box-sizing: border-box;
+    overflow-y: auto;
   }
 
-  /* Overlay Background Blur */
-  #panel-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    z-index: 4999;
-  }
+  .about-text { font-size: 0.95rem; line-height: 1.5; color: #d5d6e2; margin-bottom: 25px; }
+  .subtext { font-size: 0.75rem; color: #666; font-style: italic; margin-top: 10px; display: block; }
 
   .user-profile { display: flex; align-items: center; gap: 12px; margin-top: 25px; padding-top: 20px; border-top: 1px solid #2d244a; color: #888; font-size: 0.85rem; }
   .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #0088ff; }
 
   #app-screen { display: none; }
-  #auth-screen { display: block; max-width: 400px; margin: 60px auto; }
+  #auth-screen { display: block; max-width: 400px; margin: 60px auto; text-align: center; }
 </style>
 </head>
 <body>
 
   <h1>The Barter Ledger</h1>
-  <div id="panel-overlay" onclick="closeSettings()"></div>
 
-  <div id="auth-screen" class="card">
-    <h2 style="text-align: center; margin-top: 0; border: none;">Access The Vault</h2>
-    <p style="text-align: center; color: #bba2ff; font-size: 0.9rem; margin-bottom: 20px;">Identity verification required.</p>
-    <button class="btn btn-google" onclick="handleGoogleLogin()">Authenticate with Google</button>
-    <div id="auth-error" style="color: #ff0080; text-align: center; margin-top: 15px; font-size: 0.85rem; height: 20px;"></div>
+  <div id="auth-screen">
+    <div class="card">
+        <h2 style="margin-top:0; border:none;">Welcome</h2>
+        <div class="about-text" style="text-align: left;">
+            I've struggled for years with "Quitting bad habits." Recently, I came up with a new idea: the best motivation is actually your bad habits. Instead of quitting drinking, let's reward ourselves with a conservative amount of alcohol based on how many days we go dry. 
+            <br><br>
+            Struggling to study? Reward yourself with 10 minutes of TikTok after an hour of studying. Workout = have a snack. Diet for the week = splurge for the weekend. Save for life = spend for fun. 
+            <br><br>
+            It's not about quitting. Let's embrace them and use them for personalized motivation. Better yourself by <strong>Bartering with yourself.</strong>
+            <span class="subtext">We require Google authentication to keep your information safe and private.</span>
+        </div>
+        <button class="btn btn-google" onclick="handleGoogleLogin()">Authenticate with Google</button>
+    </div>
   </div>
 
   <div id="app-screen">
@@ -113,39 +100,26 @@
       
       <button class="drawer-btn" onclick="toggleDrawer('goal-drawer')">+ Forge New Goal</button>
       <div id="goal-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #0088ff; margin-bottom: 10px;">
-        <div class="input-group"><input type="text" id="new-goal-name" placeholder="Goal Name"></div>
-        <div class="input-group">
-          <input type="number" id="new-goal-target" placeholder="Target" style="width: 50%;">
-          <input type="number" id="new-goal-reward" placeholder="Reward" style="width: 50%;">
+        <input type="text" id="new-goal-name" placeholder="Goal Name">
+        <div style="display:flex; gap:10px;">
+            <input type="number" id="new-goal-target" placeholder="Target">
+            <input type="number" id="new-goal-reward" placeholder="Reward">
         </div>
-        <label class="checkbox-wrapper">
-            <input type="checkbox" id="new-goal-is-currency" checked> <span>Use Currency ($)</span>
-        </label>
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
 
       <button class="drawer-btn" onclick="toggleDrawer('contract-drawer')">+ Forge New Contract</button>
       <div id="contract-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
-        <div class="input-group">
-          <input type="text" id="new-task" placeholder="The Chore">
-          <input type="text" id="new-reward" placeholder="The Reward">
-        </div>
-        <div class="input-group">
-          <input type="number" id="new-earn" placeholder="Earn amt" style="width: 50%;">
-          <input type="number" id="new-cost" placeholder="Claim cost" style="width: 50%;">
-        </div>
+        <input type="text" id="new-task" placeholder="The Chore">
+        <input type="text" id="new-reward" placeholder="The Reward">
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createContract()">Lock It In</button>
       </div>
 
-      <button class="drawer-btn" style="color: #ff0080; border-color: rgba(255, 0, 128, 0.3);" onclick="toggleDrawer('nuke-drawer')">⚠ Danger Zone</button>
-      <div id="nuke-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
-        <button class="btn btn-red" style="width: 100%; margin: 0; background: rgba(255, 0, 0, 0.2);" onclick="resetToOEM()">Nuclear Option: Reset to OEM</button>
-      </div>
+      <button class="drawer-btn" style="color: #ff80c0;" onclick="location.href='mailto:support@barteryourself.com?subject=Bug Report'">🪲 Report a Bug</button>
 
-      <button class="drawer-btn" style="color: #0088ff; border-color: rgba(0, 136, 255, 0.3);" onclick="toggleDrawer('install-drawer')">Install App to Home Screen</button>
-      <div id="install-drawer" style="display: none; padding: 10px; border-left: 2px solid #0088ff; margin-bottom: 10px; font-size: 0.85rem; color: #bba2ff;">
-        <p><strong>iOS/Safari:</strong> Tap <strong>Share</strong> and <strong>Add to Home Screen</strong>.</p>
-        <p><strong>Android:</strong> Tap <strong>(⋮)</strong> and <strong>Install app</strong>.</p>
+      <button class="drawer-btn" style="color: #ff0080;" onclick="toggleDrawer('nuke-drawer')">⚠ Danger Zone</button>
+      <div id="nuke-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
+        <button class="btn btn-red" style="width: 100%; margin: 0;" onclick="resetToOEM()">Nuclear Option: Reset to OEM</button>
       </div>
 
       <div class="user-profile">
@@ -153,7 +127,7 @@
         <span id="user-info">Sync Active</span>
       </div>
 
-      <button class="btn btn-red" style="width: 100%; margin: 20px 0 0 0; padding: 15px;" onclick="closeSettings()">Close Panel</button>
+      <button class="btn btn-red" style="width: 100%; margin: 40px 0 0 0; padding: 15px;" onclick="closeSettings()">Close Master Panel</button>
     </div>
 
     <div id="savings-wrapper"><h2>Active Goals</h2><div id="savings-container"></div></div>
@@ -208,7 +182,7 @@
   function updateUserDisplay(user) {
     const info = document.getElementById('user-info');
     const img = document.getElementById('user-img');
-    info.innerText = `Vault: ${user.email || user.displayName}`;
+    info.innerText = `Vault: ${user.email}`;
     if (user.photoURL) { img.src = user.photoURL; img.style.display = 'block'; }
   }
 
@@ -234,17 +208,8 @@
     setDoc(doc(db, "ledgers", currentUser.uid), { contracts, savingsGoals });
   }
 
-  window.openSettings = () => { 
-    document.getElementById('settings-panel').style.display = 'block'; 
-    document.getElementById('panel-overlay').style.display = 'block';
-  };
-  
-  window.closeSettings = () => { 
-    document.getElementById('settings-panel').style.display = 'none'; 
-    document.getElementById('panel-overlay').style.display = 'none';
-    ['goal-drawer', 'contract-drawer', 'nuke-drawer', 'install-drawer'].forEach(d => document.getElementById(d).style.display = 'none');
-  };
-
+  window.openSettings = () => { document.getElementById('settings-panel').style.display = 'block'; window.scrollTo(0,0); };
+  window.closeSettings = () => { document.getElementById('settings-panel').style.display = 'none'; };
   window.toggleDrawer = (id) => {
     const d = document.getElementById(id);
     d.style.display = d.style.display === 'none' ? 'block' : 'none';
@@ -263,14 +228,13 @@
     container.innerHTML = savingsGoals.length === 0 ? '<div style="color:#555;">No goals.</div>' : '';
     savingsGoals.forEach((goal, i) => {
       let percent = Math.min((goal.current / goal.target) * 100, 100);
-      let sym = goal.isCurrency ? '$' : '';
       container.innerHTML += `<div class="card">
-          <div class="flex-between"><span>${goal.name} (${sym}${goal.target})</span><button class="btn-scrap" onclick="deleteGoal(${i})">Scrap</button></div>
-          <div class="flex-between"><span>${sym}${goal.current} / ${sym}${goal.target}</span><span>Reward: ${sym}${goal.reward}</span></div>
+          <div class="flex-between"><span>${goal.name} ($${goal.target})</span><button class="btn-scrap" onclick="deleteGoal(${i})">Scrap</button></div>
+          <div class="flex-between"><span>$${goal.current} / $${goal.target}</span><span>Reward: $${goal.reward}</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%;"></div></div>
           <div class="flex-between"><button class="btn btn-green" onclick="modifyGoal(${i}, 5)">+5</button><button class="btn btn-green" onclick="modifyGoal(${i}, 10)">+10</button></div>
-          <div class="input-group"><input type="number" id="c-g-${i}" placeholder="Amt"><button class="btn btn-green" onclick="injectGoal(${i}, true)">Add</button></div>
-          <button class="btn btn-red" style="display:${goal.current >= goal.target ? 'block' : 'none'}; width:100%;" onclick="claimGoal(${i})">Claim</button>
+          <div class="input-group" style="margin-top:10px;"><input type="number" id="c-g-${i}" placeholder="Amt" style="margin:0;"><button class="btn btn-green" onclick="injectGoal(${i}, true)">Add</button></div>
+          <button class="btn btn-red" style="display:${goal.current >= goal.target ? 'block' : 'none'}; width:100%; margin-top:10px;" onclick="claimGoal(${i})">Claim</button>
       </div>`;
     });
   }
@@ -287,9 +251,8 @@
     let name = document.getElementById('new-goal-name').value;
     let target = parseInt(document.getElementById('new-goal-target').value);
     let reward = parseInt(document.getElementById('new-goal-reward').value) || 0;
-    let isCurr = document.getElementById('new-goal-is-currency').checked;
     if (name && target > 0) {
-      savingsGoals.push({ id: Date.now().toString(), name, current: 0, target, reward, isCurrency: isCurr });
+      savingsGoals.push({ id: Date.now().toString(), name, current: 0, target, reward, isCurrency: true });
       document.getElementById('new-goal-name').value=''; renderGoals(); saveToCloud(); closeSettings();
     }
   }
@@ -300,7 +263,7 @@
     contracts.forEach((c, i) => {
       container.innerHTML += `<div class="card">
           <div class="flex-between"><span>${c.task} = ${c.reward}</span><button class="btn-scrap" onclick="deleteContract(${i})">Scrap</button></div>
-          <div class="flex-between"><button class="btn btn-green" onclick="modifyBalance(${i}, ${c.earnRate || 1})">Task Done</button><span class="balance-display">${c.balance || 0}</span><button class="btn btn-red" onclick="modifyBalance(${i}, -${c.costRate || 1})">Claim</button></div>
+          <div class="flex-between"><button class="btn btn-green" onclick="modifyBalance(${i}, ${c.earnRate || 1})">Done</button><span class="balance-display">${c.balance || 0}</span><button class="btn btn-red" onclick="modifyBalance(${i}, -${c.costRate || 1})">Claim</button></div>
         </div>`;
     });
   }
@@ -310,11 +273,9 @@
 
   window.createContract = () => {
     let t = document.getElementById('new-task').value; let r = document.getElementById('new-reward').value;
-    let e = parseInt(document.getElementById('new-earn').value) || 1; let c = parseInt(document.getElementById('new-cost').value) || 1;
     if (t && r) {
-      contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: e, costRate: c });
+      contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: 1, costRate: 1 });
       document.getElementById('new-task').value=''; document.getElementById('new-reward').value='';
-      document.getElementById('new-earn').value=''; document.getElementById('new-cost').value='';
       renderContracts(); saveToCloud(); closeSettings();
     }
   }
