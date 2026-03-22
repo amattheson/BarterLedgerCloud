@@ -130,9 +130,7 @@
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createContract()">Lock It In</button>
       </div>
 
-      <div style="margin-top: 20px; border-top: 1px dashed #ff0080; padding-top: 15px;">
-        <button class="btn btn-scrap" style="width: 100%; border-color: #ff0080; color: #ff0080; font-size: 0.9rem; padding: 10px;" onclick="resetToOEM()">Nuclear Option: Reset Everything to OEM</button>
-      </div>
+      <button class="drawer-btn" style="color: #ff0080; border-color: rgba(255, 0, 128, 0.3);" onclick="resetToOEM()">⚠ Nuclear Option: Reset everything</button>
 
       <button class="btn btn-red" style="width: 100%; margin: 20px 0 0 0;" onclick="closeSettings()">Close Panel</button>
     </div>
@@ -400,10 +398,11 @@
       let taskName = contract.task || "Unknown Task";
       let rewardName = contract.reward || "Reward";
 
+      // FIXED: Removed the hardcoded ${earn} variable from the task display header
       container.innerHTML += `
         <div class="card">
           <div class="flex-between" style="border-bottom: 1px solid #2d244a; padding-bottom: 8px; margin-bottom: 12px;">
-            <span style="color: #bba2ff; font-size: 0.9rem;">${taskName} <span style="color: #555;">=</span> ${earn} ${rewardName}</span>
+            <span style="color: #bba2ff; font-size: 0.9rem;">${taskName} <span style="color: #555;">=</span> ${rewardName}</span>
             <button class="btn-scrap" onclick="deleteContract(${index})">Scrap</button>
           </div>
           <div class="flex-between">
@@ -412,7 +411,7 @@
             <button class="btn btn-red" onclick="modifyBalance(${index}, -${cost})">Claim Reward</button>
           </div>
           <div style="text-align: center; margin-top: 8px; color: #7ab4ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">
-            Inventory: ${rewardName}
+            INVENTORY: ${rewardName}
           </div>
         </div>
       `;
