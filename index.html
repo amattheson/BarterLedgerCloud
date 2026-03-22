@@ -98,23 +98,24 @@
   <div id="app-screen">
     
     <div id="settings-panel" class="card" style="border-color: #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.2);">
-      <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
-      
-      <label class="checkbox-wrapper" style="margin-bottom: 20px;">
-        <input type="checkbox" id="toggle-savings-module" onchange="toggleModuleVisibility()">
-        Power to Capital Liquidation Module
-      </label>
-      
-      <button class="drawer-btn" onclick="toggleDrawer('goal-drawer')">+ Forge New Capital Goal</button>
-      <div id="goal-drawer" style="display: none; padding: 10px 0 15px 0; border-left: 2px solid #0088ff; padding-left: 10px; margin-bottom: 10px;">
-        <div class="input-group">
-          <input type="text" id="new-goal-name" placeholder="Goal Name (e.g., CDL Fees)">
-        </div>
-        <div class="input-group">
-          <input type="number" id="new-goal-target" placeholder="Target ($)" style="width: 50%;">
-          <input type="number" id="new-goal-reward" placeholder="Reward ($)" style="width: 50%;">
-        </div>
-        <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
+     <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
+
+<label class="checkbox-wrapper" style="margin-bottom: 20px;">
+  <input type="checkbox" id="toggle-savings-module" onchange="toggleModuleVisibility()">
+  Power to Capital Liquidation Module
+</label>
+
+<button class="drawer-btn" onclick="toggleDrawer('goal-drawer')">+ Forge New Capital Goal</button>
+<div id="goal-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #0088ff; margin-bottom: 10px;">
+  </div>
+
+<button class="drawer-btn" onclick="toggleDrawer('contract-drawer')">+ Forge New Contract</button>
+<div id="contract-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
+  </div>
+
+<button class="drawer-btn" style="color: #ff0080; border-color: rgba(255, 0, 128, 0.3);" onclick="resetToOEM()">
+  ⚠ Nuclear Option: Reset to OEM
+</button>
       </div>
 
       <button class="drawer-btn" onclick="toggleDrawer('contract-drawer')">+ Forge New Contract</button>
