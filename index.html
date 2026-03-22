@@ -55,7 +55,22 @@
   .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
   input { background: #09090e; border: 1px solid #2d244a; color: #e0e0f0; padding: 10px; border-radius: 6px; width: 100%; font-size: 1rem; box-sizing: border-box; }
 
-  .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; font-size: 0.9rem; }
+  .checkbox-wrapper { 
+    display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; font-size: 0.9rem; flex-wrap: nowrap; /* Keep them on one line */ width: 100%; margin-top: 5px;
+  }
+  .checkbox-wrapper input { 
+    flex-shrink: 0; /* Prevents the checkbox from getting squished */
+    width: 20px; 
+    height: 20px; 
+    cursor: pointer; 
+    accent-color: #0088ff; 
+    margin: 0;
+  }
+  .checkbox-text {
+    white-space: nowrap; /* Keeps text from breaking weirdly */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adds ... if it still won't fit */
+  }
   .drawer-btn { background: #11111a; border: 1px solid #2d244a; color: #bba2ff; width: 100%; margin: 0 0 10px 0; padding: 12px; border-radius: 6px; font-weight: bold; text-align: left; cursor: pointer; }
 
   /* New User Profile Style */
@@ -96,7 +111,8 @@
           <input type="number" id="new-goal-reward" placeholder="Reward Quantity" style="width: 50%;">
         </div>
         <label class="checkbox-wrapper" style="margin-bottom: 10px;">
-            <input type="checkbox" id="new-goal-is-currency" checked> Use Currency ($)
+            <input type="checkbox" id="new-goal-is-currency" checked>
+            <span class="checkbox-text">Use Currency ($)</span>
         </label>
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
