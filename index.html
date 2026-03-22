@@ -131,7 +131,11 @@
       </div>
 
       <div style="margin-top: 20px; border-top: 1px dashed #ff0080; padding-top: 15px;">
-        <button class="btn btn-scrap" style="width: 100%; border-color: #ff0080; color: #ff0080; font-size: 0.9rem; padding: 10px;" onclick="resetToOEM()">Nuclear Option: Reset Everything to OEM</button>
+        <button class="drawer-btn" style="border-color: #ff0080; color: #ff0080; margin-bottom: 0;" onclick="toggleDrawer('nuke-drawer')">⚠ Factory Reset Options</button>
+        <div id="nuke-drawer" style="display: none; padding: 15px 0 0 0; border-left: 2px solid #ff0080; padding-left: 10px; margin-top: 10px;">
+          <p style="color: #ff80c0; font-size: 0.85rem; margin-top: 0; margin-bottom: 10px;">Warning: This action will permanently erase your current ledger.</p>
+          <button class="btn btn-scrap" style="width: 100%; border-color: #ff0080; color: #ff0080; font-size: 0.9rem; padding: 10px;" onclick="resetToOEM()">Initiate Nuclear Override</button>
+        </div>
       </div>
 
       <button class="btn btn-red" style="width: 100%; margin: 20px 0 0 0;" onclick="closeSettings()">Close Panel</button>
@@ -186,7 +190,7 @@
   ];
   let savingsGoals = [];
 
-  // --- Authentication ---
+  // Authentication Logic
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
@@ -208,7 +212,7 @@
 
   window.handleLogout = () => { signOut(auth); };
 
-  // --- Cloud Sync ---
+  // Cloud Sync
   async function loadCloudData() {
     if (!currentUser) return;
     const docRef = doc(db, "ledgers", currentUser.uid);
@@ -240,7 +244,7 @@
     });
   }
 
-  // --- Settings Panel Logic ---
+  // Settings Panel Logic
   window.openSettings = () => { 
     document.getElementById('settings-panel').style.display = 'block'; 
   };
@@ -249,6 +253,7 @@
     document.getElementById('settings-panel').style.display = 'none'; 
     document.getElementById('goal-drawer').style.display = 'none';
     document.getElementById('contract-drawer').style.display = 'none';
+    document.getElementById('nuke-drawer').style.display = 'none';
   };
 
   window.toggleDrawer = (drawerId) => {
@@ -277,7 +282,7 @@
     }
   }
 
-  // --- Dynamic Financial Mechanics ---
+  // Dynamic Financial Mechanics
   function renderGoals() {
     const container = document.getElementById('savings-container');
     container.innerHTML = '';
@@ -378,7 +383,7 @@
     }
   }
 
-  // --- Barter Mechanics ---
+  // Barter Mechanics
   function renderContracts() {
     const container = document.getElementById('contracts-container');
     container.innerHTML = '';
@@ -395,17 +400,16 @@
       let taskName = contract.task || "Unknown Task";
       let rewardName = contract.reward || "Reward";
 
-      // The Visual Grammar Fix is right here
       container.innerHTML += `
         <div class="card">
           <div class="flex-between" style="border-bottom: 1px solid #2d244a; padding-bottom: 8px; margin-bottom: 12px;">
-            <span style="color: #bba2ff; font-size: 0.9rem;">${taskName} <span style="color: #555;">➔</span> <span style="color: #fff;">${rewardName}</span></span>
+            <span style="color: #bba2ff; font-size: 0.9rem;">${taskName} <span style="color: #555;">=</span> ${earn} ${rewardName}</span>
             <button class="btn-scrap" onclick="deleteContract(${index})">Scrap</button>
           </div>
           <div class="flex-between">
-            <button class="btn btn-green" onclick="modifyBalance(${index}, ${earn})">Completed Task (+${earn})</button>
+            <button class="btn btn-green" onclick="modifyBalance(${index}, ${earn})">Completed Task</button>
             <span class="balance-display">${bal}</span>
-            <button class="btn btn-red" onclick="modifyBalance(${index}, -${cost})">Claim Reward (-${cost})</button>
+            <button class="btn btn-red" onclick="modifyBalance(${index}, -${cost})">Claim Reward</button>
           </div>
           <div style="text-align: center; margin-top: 8px; color: #7ab4ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">
             Inventory: ${rewardName}
