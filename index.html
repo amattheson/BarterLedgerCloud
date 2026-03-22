@@ -73,8 +73,8 @@
   }
   input:focus { outline: none; border-color: #0088ff; box-shadow: 0 0 8px rgba(0, 136, 255, 0.4); }
 
-  .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; }
-  .checkbox-wrapper input { width: 20px; height: 20px; cursor: pointer; accent-color: #0088ff; }
+  .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; font-size: 0.9rem; }
+  .checkbox-wrapper input { width: 18px; height: 18px; cursor: pointer; accent-color: #0088ff; margin: 0; }
 
   .drawer-btn { background: #11111a; border: 1px solid #2d244a; color: #bba2ff; width: 100%; margin: 0 0 10px 0; padding: 12px; border-radius: 6px; font-weight: bold; text-align: left; cursor: pointer; }
   .drawer-btn:hover { background: #1a1a2e; }
@@ -111,9 +111,12 @@
           <input type="text" id="new-goal-name" placeholder="Goal Name (e.g., CDL Fees)">
         </div>
         <div class="input-group">
-          <input type="number" id="new-goal-target" placeholder="Target ($)" style="width: 50%;">
-          <input type="number" id="new-goal-reward" placeholder="Reward ($)" style="width: 50%;">
+          <input type="number" id="new-goal-target" placeholder="Target Quantity" style="width: 50%;">
+          <input type="number" id="new-goal-reward" placeholder="Reward Quantity" style="width: 50%;">
         </div>
+        <label class="checkbox-wrapper" style="margin-bottom: 10px;">
+            <input type="checkbox" id="new-goal-is-currency" checked> Use Currency ($)
+        </label>
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
 
@@ -130,7 +133,11 @@
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createContract()">Lock It In</button>
       </div>
 
-      <button class="drawer-btn" style="color: #ff0080; border-color: rgba(255, 0, 128, 0.3);" onclick="resetToOEM()">⚠ Nuclear Option: Reset everything</button>
+      <button class="drawer-btn" style="color: #ff0080; border-color: rgba(255, 0, 128, 0.3);" onclick="toggleDrawer('nuke-drawer')">⚠ Danger Zone</button>
+      <div id="nuke-drawer" style="display: none; padding: 10px 0 15px 0; border-left: 2px solid #ff0080; padding-left: 10px; margin-bottom: 10px;">
+        <p style="font-size: 0.8rem; color: #ff80c0; margin-bottom: 10px;">Warning: This action is irreversible.</p>
+        <button class="btn btn-red" style="width: 100%; margin: 0; background: rgba(255, 0, 0, 0.2);" onclick="resetToOEM()">Nuclear Option: Reset to OEM</button>
+      </div>
 
       <button class="btn btn-red" style="width: 100%; margin: 20px 0 0 0;" onclick="closeSettings()">Close Panel</button>
     </div>
@@ -180,7 +187,7 @@
   let contracts = [];
 
   let defaultGoals = [
-    { id: 'g1', name: "Family Saving's", current: 0, target: 100, reward: 50 }
+    { id: 'g1', name: "Family Saving's", current: 0, target: 100, reward: 50, isCurrency: true }
   ];
   let savingsGoals = [];
 
@@ -247,6 +254,7 @@
     document.getElementById('settings-panel').style.display = 'none'; 
     document.getElementById('goal-drawer').style.display = 'none';
     document.getElementById('contract-drawer').style.display = 'none';
+    document.getElementById('nuke-drawer').style.display = 'none';
   };
 
   window.toggleDrawer = (drawerId) => {
@@ -267,12 +275,14 @@
 
   window.resetToOEM = () => {
     if (confirm("CRITICAL WARNING: This will completely obliterate BOTH your current savings goals AND your active contracts, resetting the entire board. Do you wish to proceed?")) {
+      showSavingsModule = true; // FORCE POWER ON FOR RESET
       savingsGoals = JSON.parse(JSON.stringify(defaultGoals));
       savingsGoals.forEach(g => g.id = Date.now().toString() + Math.floor(Math.random() * 1000));
       
       contracts = JSON.parse(JSON.stringify(defaultContracts));
       contracts.forEach(c => c.id = Date.now().toString() + Math.floor(Math.random() * 1000));
       
+      applySettingsToUI();
       renderGoals();
       renderContracts();
       saveToCloud();
@@ -293,17 +303,21 @@
     savingsGoals.forEach((goal, index) => {
       let percent = Math.min((Math.max(goal.current, 0) / goal.target) * 100, 100);
       let claimDisplay = goal.current >= goal.target ? 'block' : 'none';
+      
+      // Handle unit symbol
+      let sym = goal.isCurrency ? '$' : '';
+      let rewardText = goal.isCurrency ? `$${goal.reward}` : `${goal.reward} units`;
 
       container.innerHTML += `
         <div class="card">
           <div class="flex-between" style="border-bottom: 1px solid #2d244a; padding-bottom: 8px; margin-bottom: 12px;">
-            <span class="task-name" style="color: #bba2ff;">${goal.name} (Save $<span style="color: #fff;">${goal.target}</span>)</span>
+            <span class="task-name" style="color: #bba2ff;">${goal.name} (Goal: ${sym}${goal.target})</span>
             <button class="btn-scrap" onclick="deleteGoal(${index})">Scrap</button>
           </div>
           
           <div class="flex-between" style="margin-top: 10px;">
-            <span style="color: #7ab4ff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 136, 255, 0.4);">$<span>${goal.current}</span> <span style="color: #555;">/ $<span>${goal.target}</span></span></span>
-            <span style="color: #ff80c0; font-size: 0.85rem;">Reward: $${goal.reward}</span>
+            <span style="color: #7ab4ff; font-weight: bold; text-shadow: 0 0 5px rgba(0, 136, 255, 0.4);">${sym}<span>${goal.current}</span> <span style="color: #555;">/ ${sym}<span>${goal.target}</span></span></span>
+            <span style="color: #ff80c0; font-size: 0.85rem;">Reward: ${rewardText}</span>
           </div>
 
           <div class="progress-bar">
@@ -311,9 +325,9 @@
           </div>
           
           <div class="flex-between" style="margin: 0 -5px;">
-            <button class="btn btn-green" onclick="modifyGoal(${index}, 5)">+$5</button>
-            <button class="btn btn-green" onclick="modifyGoal(${index}, 10)">+$10</button>
-            <button class="btn btn-green" onclick="modifyGoal(${index}, 20)">+$20</button>
+            <button class="btn btn-green" onclick="modifyGoal(${index}, 5)">+5</button>
+            <button class="btn btn-green" onclick="modifyGoal(${index}, 10)">+10</button>
+            <button class="btn btn-green" onclick="modifyGoal(${index}, 20)">+20</button>
           </div>
           
           <div class="input-group" style="margin-top: 10px;">
@@ -322,7 +336,7 @@
             <button class="btn btn-red" style="margin: 0; flex: 0.5;" onclick="injectGoal(${index}, false)">Remove</button>
           </div>
           
-          <button class="btn btn-red" style="display:${claimDisplay}; width: 100%; margin: 15px 0 0 0;" onclick="claimGoal(${index})">Claim $${goal.reward} & Reset</button>
+          <button class="btn btn-red" style="display:${claimDisplay}; width: 100%; margin: 15px 0 0 0;" onclick="claimGoal(${index})">Claim ${rewardText} & Reset</button>
         </div>
       `;
     });
@@ -355,7 +369,7 @@
   }
 
   window.deleteGoal = (index) => {
-    if (confirm("Are you sure you want to scrap this financial goal?")) {
+    if (confirm("Are you sure you want to scrap this goal?")) {
       savingsGoals.splice(index, 1);
       renderGoals();
       saveToCloud();
@@ -366,10 +380,18 @@
     let name = document.getElementById('new-goal-name').value;
     let target = parseInt(document.getElementById('new-goal-target').value);
     let reward = parseInt(document.getElementById('new-goal-reward').value);
+    let isCurrency = document.getElementById('new-goal-is-currency').checked;
 
     if (name && !isNaN(target) && target > 0) {
       let finalReward = isNaN(reward) ? 0 : reward;
-      savingsGoals.push({ id: Date.now().toString(), name: name, current: 0, target: target, reward: finalReward });
+      savingsGoals.push({ 
+        id: Date.now().toString(), 
+        name: name, 
+        current: 0, 
+        target: target, 
+        reward: finalReward,
+        isCurrency: isCurrency 
+      });
       
       document.getElementById('new-goal-name').value = '';
       document.getElementById('new-goal-target').value = '';
@@ -398,7 +420,6 @@
       let taskName = contract.task || "Unknown Task";
       let rewardName = contract.reward || "Reward";
 
-      // FIXED: Removed the hardcoded ${earn} variable from the task display header
       container.innerHTML += `
         <div class="card">
           <div class="flex-between" style="border-bottom: 1px solid #2d244a; padding-bottom: 8px; margin-bottom: 12px;">
