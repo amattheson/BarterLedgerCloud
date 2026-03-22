@@ -262,11 +262,6 @@
     saveToCloud();
   }
 
-  function applySettingsToUI() {
-    document.getElementById('toggle-savings-module').checked = showSavingsModule;
-    document.getElementById('savings-wrapper').style.display = showSavingsModule ? 'block' : 'none';
-  }
-
   window.resetToOEM = () => {
     if (confirm("CRITICAL WARNING: This will completely obliterate BOTH your current savings goals AND your active contracts, resetting the entire board. Do you wish to proceed?")) {
       savingsGoals = JSON.parse(JSON.stringify(defaultGoals));
@@ -400,16 +395,17 @@
       let taskName = contract.task || "Unknown Task";
       let rewardName = contract.reward || "Reward";
 
+      // The Visual Grammar Fix is right here
       container.innerHTML += `
         <div class="card">
           <div class="flex-between" style="border-bottom: 1px solid #2d244a; padding-bottom: 8px; margin-bottom: 12px;">
-            <span style="color: #bba2ff; font-size: 0.9rem;">${taskName} <span style="color: #555;">=</span> ${earn} ${rewardName}</span>
+            <span style="color: #bba2ff; font-size: 0.9rem;">${taskName} <span style="color: #555;">➔</span> <span style="color: #fff;">${rewardName}</span></span>
             <button class="btn-scrap" onclick="deleteContract(${index})">Scrap</button>
           </div>
           <div class="flex-between">
-            <button class="btn btn-green" onclick="modifyBalance(${index}, ${earn})">Completed Task</button>
+            <button class="btn btn-green" onclick="modifyBalance(${index}, ${earn})">Completed Task (+${earn})</button>
             <span class="balance-display">${bal}</span>
-            <button class="btn btn-red" onclick="modifyBalance(${index}, -${cost})">Claim Reward</button>
+            <button class="btn btn-red" onclick="modifyBalance(${index}, -${cost})">Claim Reward (-${cost})</button>
           </div>
           <div style="text-align: center; margin-top: 8px; color: #7ab4ff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px;">
             Inventory: ${rewardName}
