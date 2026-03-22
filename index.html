@@ -78,12 +78,6 @@
     
     <div id="settings-panel" class="card" style="border-color: #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.2);">
       <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
-      
-      <button class="drawer-btn" style="color: #0088ff; border-color: rgba(0, 136, 255, 0.3);" onclick="toggleDrawer('install-drawer')">📲 Install to Home Screen</button>
-      <div id="install-drawer" style="display: none; padding: 10px; border-left: 2px solid #0088ff; margin-bottom: 10px; font-size: 0.85rem; color: #bba2ff;">
-        <p><strong>iOS/Safari:</strong> Tap the <span style="color:#fff;">Share icon</span> (square with up arrow) and select <span style="color:#fff;">"Add to Home Screen"</span>.</p>
-        <p><strong>Android/Chrome:</strong> Tap the <span style="color:#fff;">three dots (⋮)</span> and select <span style="color:#fff;">"Install app"</span> or "Add to Home screen".</p>
-      </div>
 
       <button class="drawer-btn" onclick="toggleDrawer('goal-drawer')">+ Forge New Goal</button>
       <div id="goal-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #0088ff; margin-bottom: 10px;">
@@ -116,6 +110,12 @@
       <button class="drawer-btn" style="color: #ff0080; border-color: rgba(255, 0, 128, 0.3);" onclick="toggleDrawer('nuke-drawer')">⚠ Danger Zone</button>
       <div id="nuke-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
         <button class="btn btn-red" style="width: 100%; margin: 0; background: rgba(255, 0, 0, 0.2);" onclick="resetToOEM()">Nuclear Option: Reset to OEM</button>
+      </div>
+
+      <button class="drawer-btn" style="color: #0088ff; border-color: rgba(0, 136, 255, 0.3);" onclick="toggleDrawer('install-drawer')">Install to Home Screen</button>
+      <div id="install-drawer" style="display: none; padding: 10px; border-left: 2px solid #0088ff; margin-bottom: 10px; font-size: 0.85rem; color: #bba2ff;">
+        <p><strong>iOS/Safari:</strong> Tap the <span style="color:#fff;">Share icon</span> (square with up arrow) and select <span style="color:#fff;">"Add to Home Screen"</span>.</p>
+        <p><strong>Android/Chrome:</strong> Tap the <span style="color:#fff;">three dots (⋮)</span> and select <span style="color:#fff;">"Install app"</span> or "Add to Home screen".</p>
       </div>
 
       <button class="btn btn-red" style="width: 100%; margin: 20px 0 0 0;" onclick="closeSettings()">Close Panel</button>
