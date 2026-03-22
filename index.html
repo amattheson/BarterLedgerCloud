@@ -131,11 +131,7 @@
       </div>
 
       <div style="margin-top: 20px; border-top: 1px dashed #ff0080; padding-top: 15px;">
-        <button class="drawer-btn" style="border-color: #ff0080; color: #ff0080; margin-bottom: 0;" onclick="toggleDrawer('nuke-drawer')">⚠ Factory Reset Options</button>
-        <div id="nuke-drawer" style="display: none; padding: 15px 0 0 0; border-left: 2px solid #ff0080; padding-left: 10px; margin-top: 10px;">
-          <p style="color: #ff80c0; font-size: 0.85rem; margin-top: 0; margin-bottom: 10px;">Warning: This action will permanently erase your current ledger.</p>
-          <button class="btn btn-scrap" style="width: 100%; border-color: #ff0080; color: #ff0080; font-size: 0.9rem; padding: 10px;" onclick="resetToOEM()">Initiate Nuclear Override</button>
-        </div>
+        <button class="btn btn-scrap" style="width: 100%; border-color: #ff0080; color: #ff0080; font-size: 0.9rem; padding: 10px;" onclick="resetToOEM()">Nuclear Option: Reset Everything to OEM</button>
       </div>
 
       <button class="btn btn-red" style="width: 100%; margin: 20px 0 0 0;" onclick="closeSettings()">Close Panel</button>
@@ -190,7 +186,7 @@
   ];
   let savingsGoals = [];
 
-  // Authentication Logic
+  // --- Authentication ---
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       currentUser = user;
@@ -212,7 +208,7 @@
 
   window.handleLogout = () => { signOut(auth); };
 
-  // Cloud Sync
+  // --- Cloud Sync ---
   async function loadCloudData() {
     if (!currentUser) return;
     const docRef = doc(db, "ledgers", currentUser.uid);
@@ -244,7 +240,7 @@
     });
   }
 
-  // Settings Panel Logic
+  // --- Settings Panel Logic ---
   window.openSettings = () => { 
     document.getElementById('settings-panel').style.display = 'block'; 
   };
@@ -253,7 +249,6 @@
     document.getElementById('settings-panel').style.display = 'none'; 
     document.getElementById('goal-drawer').style.display = 'none';
     document.getElementById('contract-drawer').style.display = 'none';
-    document.getElementById('nuke-drawer').style.display = 'none';
   };
 
   window.toggleDrawer = (drawerId) => {
@@ -265,6 +260,11 @@
     showSavingsModule = document.getElementById('toggle-savings-module').checked;
     applySettingsToUI();
     saveToCloud();
+  }
+
+  function applySettingsToUI() {
+    document.getElementById('toggle-savings-module').checked = showSavingsModule;
+    document.getElementById('savings-wrapper').style.display = showSavingsModule ? 'block' : 'none';
   }
 
   window.resetToOEM = () => {
@@ -282,7 +282,7 @@
     }
   }
 
-  // Dynamic Financial Mechanics
+  // --- Dynamic Financial Mechanics ---
   function renderGoals() {
     const container = document.getElementById('savings-container');
     container.innerHTML = '';
@@ -383,7 +383,7 @@
     }
   }
 
-  // Barter Mechanics
+  // --- Barter Mechanics ---
   function renderContracts() {
     const container = document.getElementById('contracts-container');
     container.innerHTML = '';
