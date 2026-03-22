@@ -91,9 +91,26 @@
   }
   .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #0088ff; }
 
-  #app-screen { display: none; }
+  #app-screen { 
+    display: none; 
+    margin-top: 20px; 
+  }
   #auth-screen { display: block; max-width: 400px; margin: 60px auto; }
-  #settings-panel { display: none; }
+  #settings-panel { 
+    display: none; 
+    position: fixed; /* Make the panel stay put while you scroll through it */
+    top: 85px;       /* Pushes it down so it doesn't hide behind the header */
+    left: 20px; 
+    right: 20px; 
+    max-height: calc(100vh - 120px); /* Keeps it from going off the bottom of the screen */
+    overflow-y: auto; /* Allows you to scroll within the panel if it gets long */
+    z-index: 2000;    /* Higher than the 1000 we gave the H1 header */
+    background: #11111a; 
+    border: 1px solid #0088ff; 
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 136, 255, 0.2);
+    padding: 20px;
+    border-radius: 8px;
+  }
 </style>
 </head>
 <body>
