@@ -6,31 +6,30 @@
 <title>The Barter Ledger</title>
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&display=swap" rel="stylesheet">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Barter Ledger">
 
 <style>
   body { 
     background-color: #09090e; color: #e0e0f0; font-family: system-ui, -apple-system, sans-serif; 
-    margin: 0; padding: 100px 20px 20px 20px; /* Padding top to clear sticky H1 */
+    margin: 0; padding: 110px 20px 20px 20px; /* Clears the fixed header */
     touch-action: manipulation;
   }
   
   /* STICKY HEADER */
   h1 { 
     font-family: 'Cinzel', serif; font-size: 1.6rem; text-align: center; color: #ffffff; font-weight: 700; 
-    letter-spacing: 2px; border-bottom: 1px solid #2d244a; padding: 20px 0; 
+    letter-spacing: 2px; border-bottom: 1px solid #2d244a; padding: 25px 0; 
     text-shadow: 0 0 12px rgba(188, 19, 254, 0.6); text-transform: uppercase;
-    position: fixed; top: 0; left: 0; width: 100%; background-color: #09090e;
+    position: fixed; top: 0; left: 0; width: 100%; background-color: rgba(9, 9, 14, 0.95);
     z-index: 1000; margin: 0; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px); /* Makes the header look premium */
   }
 
-  h2 { color: #bba2ff; font-weight: 400; font-size: 1.2rem; margin-top: 30px; border-bottom: 1px dashed #2d244a; padding-bottom: 5px; text-shadow: 0 0 8px rgba(187, 162, 255, 0.3); }
+  h2 { color: #bba2ff; font-weight: 400; font-size: 1.2rem; margin-top: 30px; border-bottom: 1px dashed #2d244a; padding-bottom: 5px; }
   
   .card { 
     background: #11111a; padding: 15px; border-radius: 8px; margin-bottom: 15px; 
@@ -38,44 +37,58 @@
   }
   
   .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .balance-display { font-size: 1.5rem; font-weight: bold; color: #fff; min-width: 30px; text-align: center; text-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
+  .balance-display { font-size: 1.5rem; font-weight: bold; color: #fff; min-width: 30px; text-align: center; }
   
   .btn { 
-    background: #1a1a2e; color: #fff; border: 1px solid #444; padding: 10px 15px; 
+    background: #1a1a2e; color: #fff; border: 1px solid #444; padding: 12px 15px; 
     border-radius: 6px; cursor: pointer; font-size: 0.9rem; font-weight: bold;
     flex: 1; margin: 0 5px; transition: all 0.2s ease; text-align: center;
   }
   
   .btn-green { background: rgba(0, 136, 255, 0.1); border-color: #0088ff; color: #80c4ff; }
-  .btn-green:active { background: #0088ff; color: #fff; box-shadow: 0 0 15px #0088ff; }
   .btn-red { background: rgba(255, 0, 128, 0.1); border-color: #ff0080; color: #ff80c0; }
-  .btn-red:active { background: #ff0080; color: #fff; box-shadow: 0 0 15px #ff0080; }
-
-  .btn-google { background: #e0e0f0; color: #09090e; border-color: #fff; margin-top: 15px; width: 100%; box-shadow: 0 0 10px rgba(255,255,255,0.2); padding: 15px; font-size: 1rem; }
-  .btn-scrap { background: transparent; border: 1px solid rgba(255, 0, 128, 0.5); color: #ff80c0; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s ease; }
+  .btn-scrap { background: transparent; border: 1px solid rgba(255, 0, 128, 0.5); color: #ff80c0; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; }
 
   .progress-bar { background: #09090e; border-radius: 4px; height: 12px; width: 100%; margin: 15px 0; overflow: hidden; border: 1px solid #2d244a; }
-  .progress-fill { background: linear-gradient(90deg, #0088ff, #ff0080); height: 100%; width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+  .progress-fill { background: linear-gradient(90deg, #0088ff, #ff0080); height: 100%; width: 0%; transition: width 0.4s ease; }
   
   .input-group { display: flex; gap: 10px; margin-bottom: 10px; }
-  input { background: #09090e; border: 1px solid #2d244a; color: #e0e0f0; padding: 10px; border-radius: 6px; width: 100%; font-size: 1rem; box-sizing: border-box; }
+  input { background: #09090e; border: 1px solid #2d244a; color: #e0e0f0; padding: 12px; border-radius: 6px; width: 100%; font-size: 1rem; box-sizing: border-box; }
 
   .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; font-size: 0.9rem; margin-bottom: 15px; }
-  .checkbox-wrapper input { width: 20px; height: 20px; flex-shrink: 0; accent-color: #0088ff; }
+  .checkbox-wrapper input { width: 22px; height: 22px; flex-shrink: 0; accent-color: #0088ff; }
 
-  .drawer-btn { background: #11111a; border: 1px solid #2d244a; color: #bba2ff; width: 100%; margin: 0 0 10px 0; padding: 12px; border-radius: 6px; font-weight: bold; text-align: left; cursor: pointer; }
+  .drawer-btn { background: #11111a; border: 1px solid #2d244a; color: #bba2ff; width: 100%; margin: 0 0 10px 0; padding: 14px; border-radius: 6px; font-weight: bold; text-align: left; cursor: pointer; }
 
-  /* OVERRIDE SETTINGS PANEL */
+  /* THE FIXED OVERLAY PANEL */
   #settings-panel { 
     display: none; 
-    position: fixed; top: 10%; left: 10px; right: 10px; 
-    max-height: 80vh; overflow-y: auto; 
-    background: #11111a; z-index: 2000; /* Higher than H1 */
-    border: 1px solid #0088ff; border-radius: 8px; padding: 20px;
-    box-shadow: 0 0 40px rgba(0,0,0,1);
+    position: fixed; 
+    top: 50%; left: 50%; transform: translate(-50%, -50%); /* Centers perfectly */
+    width: 90%; 
+    max-width: 450px;
+    max-height: 85vh; 
+    overflow-y: auto; 
+    background: #11111a; 
+    z-index: 5000; /* Extremely high to beat any other element */
+    border: 1px solid #0088ff; 
+    border-radius: 12px; 
+    padding: 25px;
+    box-shadow: 0 0 50px rgba(0,0,0,1), 0 0 20px rgba(0, 136, 255, 0.3);
+    box-sizing: border-box;
   }
 
-  .user-profile { display: flex; align-items: center; gap: 12px; margin-top: 20px; padding-top: 15px; border-top: 1px solid #2d244a; color: #888; font-size: 0.85rem; }
+  /* Overlay Background Blur */
+  #panel-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 4999;
+  }
+
+  .user-profile { display: flex; align-items: center; gap: 12px; margin-top: 25px; padding-top: 20px; border-top: 1px solid #2d244a; color: #888; font-size: 0.85rem; }
   .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #0088ff; }
 
   #app-screen { display: none; }
@@ -85,6 +98,7 @@
 <body>
 
   <h1>The Barter Ledger</h1>
+  <div id="panel-overlay" onclick="closeSettings()"></div>
 
   <div id="auth-screen" class="card">
     <h2 style="text-align: center; margin-top: 0; border: none;">Access The Vault</h2>
@@ -94,18 +108,15 @@
   </div>
 
   <div id="app-screen">
-    
     <div id="settings-panel">
-      <h2 style="margin-top: 0; color: #0088ff; border-bottom-color: #0088ff;">Master Breaker Panel</h2>
+      <h2 style="margin-top: 0; color: #0088ff; border-bottom: 2px solid #0088ff; padding-bottom: 10px;">Master Breaker Panel</h2>
       
       <button class="drawer-btn" onclick="toggleDrawer('goal-drawer')">+ Forge New Goal</button>
       <div id="goal-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #0088ff; margin-bottom: 10px;">
+        <div class="input-group"><input type="text" id="new-goal-name" placeholder="Goal Name"></div>
         <div class="input-group">
-          <input type="text" id="new-goal-name" placeholder="Goal Name (e.g., Personal Budget)">
-        </div>
-        <div class="input-group">
-          <input type="number" id="new-goal-target" placeholder="Target Quantity" style="width: 50%;">
-          <input type="number" id="new-goal-reward" placeholder="Reward Quantity" style="width: 50%;">
+          <input type="number" id="new-goal-target" placeholder="Target" style="width: 50%;">
+          <input type="number" id="new-goal-reward" placeholder="Reward" style="width: 50%;">
         </div>
         <label class="checkbox-wrapper">
             <input type="checkbox" id="new-goal-is-currency" checked> <span>Use Currency ($)</span>
@@ -131,27 +142,22 @@
         <button class="btn btn-red" style="width: 100%; margin: 0; background: rgba(255, 0, 0, 0.2);" onclick="resetToOEM()">Nuclear Option: Reset to OEM</button>
       </div>
 
-      <button class="drawer-btn" style="color: #0088ff; border-color: rgba(0, 136, 255, 0.3);" onclick="toggleDrawer('install-drawer')">📲 Install to Home Screen</button>
+      <button class="drawer-btn" style="color: #0088ff; border-color: rgba(0, 136, 255, 0.3);" onclick="toggleDrawer('install-drawer')">📲 Install App</button>
       <div id="install-drawer" style="display: none; padding: 10px; border-left: 2px solid #0088ff; margin-bottom: 10px; font-size: 0.85rem; color: #bba2ff;">
-        <p><strong>iOS/Safari:</strong> Tap <span style="color:#fff;">Share</span> and select <span style="color:#fff;">"Add to Home Screen"</span>.</p>
-        <p><strong>Android:</strong> Tap <span style="color:#fff;">(⋮)</span> and select <span style="color:#fff;">"Install app"</span>.</p>
+        <p><strong>iOS/Safari:</strong> Tap <strong>Share</strong> and <strong>Add to Home Screen</strong>.</p>
+        <p><strong>Android:</strong> Tap <strong>(⋮)</strong> and <strong>Install app</strong>.</p>
       </div>
 
-      <div id="user-display" class="user-profile">
+      <div class="user-profile">
         <img id="user-img" class="user-avatar" src="" alt="" style="display: none;">
         <span id="user-info">Sync Active</span>
       </div>
 
-      <button class="btn btn-red" style="width: 100%; margin: 15px 0 0 0;" onclick="closeSettings()">Close Panel</button>
+      <button class="btn btn-red" style="width: 100%; margin: 20px 0 0 0; padding: 15px;" onclick="closeSettings()">Close Panel</button>
     </div>
 
-    <div id="savings-wrapper">
-      <h2>Active Goals</h2>
-      <div id="savings-container"></div>
-    </div>
-
-    <h2>Active Contracts</h2>
-    <div id="contracts-container"></div>
+    <div id="savings-wrapper"><h2>Active Goals</h2><div id="savings-container"></div></div>
+    <h2>Active Contracts</h2><div id="contracts-container"></div>
 
     <div class="flex-between" style="margin-top: 30px;">
       <button class="btn" style="background: transparent; border-color: #0088ff; color: #0088ff;" onclick="openSettings()">Configure Dashboard</button>
@@ -180,15 +186,10 @@
   const googleProvider = new GoogleAuthProvider();
 
   let currentUser = null;
-  let defaultContracts = [
-    { id: 'c1', task: 'Walk a mile', reward: 'Have a snack', balance: 0, earnRate: 1, costRate: 1 },
-    { id: 'c2', task: 'Study for 1 hour', reward: 'YouTube for 10 min', balance: 0, earnRate: 1, costRate: 1 }
-  ];
   let contracts = [];
-  let defaultGoals = [
-    { id: 'g1', name: "Personal Budget", current: 0, target: 100, reward: 50, isCurrency: true }
-  ];
   let savingsGoals = [];
+  const defaultContracts = [{ id: 'c1', task: 'Walk a mile', reward: 'Have a snack', balance: 0, earnRate: 1, costRate: 1 }];
+  const defaultGoals = [{ id: 'g1', name: "Personal Budget", current: 0, target: 100, reward: 50, isCurrency: true }];
 
   onAuthStateChanged(auth, async (user) => {
     if (user) {
@@ -207,7 +208,7 @@
   function updateUserDisplay(user) {
     const info = document.getElementById('user-info');
     const img = document.getElementById('user-img');
-    info.innerText = `Vault synced: ${user.email || user.displayName}`;
+    info.innerText = `Vault: ${user.email || user.displayName}`;
     if (user.photoURL) { img.src = user.photoURL; img.style.display = 'block'; }
   }
 
@@ -223,25 +224,25 @@
       contracts = data.contracts || defaultContracts;
       savingsGoals = data.savingsGoals || defaultGoals;
     } else {
-      contracts = defaultContracts;
-      savingsGoals = defaultGoals;
-      saveToCloud(); 
+      contracts = defaultContracts; savingsGoals = defaultGoals; saveToCloud(); 
     }
     renderGoals(); renderContracts();
   }
 
   function saveToCloud() {
     if (!currentUser) return;
-    const docRef = doc(db, "ledgers", currentUser.uid);
-    setDoc(docRef, { contracts: contracts, savingsGoals: savingsGoals });
+    setDoc(doc(db, "ledgers", currentUser.uid), { contracts, savingsGoals });
   }
 
-  window.openSettings = () => { document.getElementById('settings-panel').style.display = 'block'; };
+  window.openSettings = () => { 
+    document.getElementById('settings-panel').style.display = 'block'; 
+    document.getElementById('panel-overlay').style.display = 'block';
+  };
+  
   window.closeSettings = () => { 
     document.getElementById('settings-panel').style.display = 'none'; 
-    ['goal-drawer', 'contract-drawer', 'nuke-drawer', 'install-drawer'].forEach(d => {
-        document.getElementById(d).style.display = 'none';
-    });
+    document.getElementById('panel-overlay').style.display = 'none';
+    ['goal-drawer', 'contract-drawer', 'nuke-drawer', 'install-drawer'].forEach(d => document.getElementById(d).style.display = 'none');
   };
 
   window.toggleDrawer = (id) => {
@@ -250,56 +251,37 @@
   };
 
   window.resetToOEM = () => {
-    if (confirm("Reset everything to OEM?")) {
+    if (confirm("Reset everything?")) {
       savingsGoals = JSON.parse(JSON.stringify(defaultGoals));
-      savingsGoals.forEach(g => g.id = Date.now().toString() + Math.floor(Math.random() * 1000));
       contracts = JSON.parse(JSON.stringify(defaultContracts));
-      contracts.forEach(c => c.id = Date.now().toString() + Math.floor(Math.random() * 1000));
       renderGoals(); renderContracts(); saveToCloud(); closeSettings();
     }
   }
 
   function renderGoals() {
     const container = document.getElementById('savings-container');
-    container.innerHTML = savingsGoals.length === 0 ? '<div style="color: #555; font-style: italic;">No active goals.</div>' : '';
-    savingsGoals.forEach((goal, index) => {
-      let percent = Math.min((Math.max(goal.current, 0) / goal.target) * 100, 100);
+    container.innerHTML = savingsGoals.length === 0 ? '<div style="color:#555;">No goals.</div>' : '';
+    savingsGoals.forEach((goal, i) => {
+      let percent = Math.min((goal.current / goal.target) * 100, 100);
       let sym = goal.isCurrency ? '$' : '';
-      let rewardText = goal.isCurrency ? `$${goal.reward}` : `${goal.reward} units`;
-      container.innerHTML += `
-        <div class="card">
-          <div class="flex-between" style="border-bottom: 1px solid #2d244a; padding-bottom: 8px;">
-            <span class="task-name" style="color: #bba2ff;">${goal.name} (Goal: ${sym}${goal.target})</span>
-            <button class="btn-scrap" onclick="deleteGoal(${index})">Scrap</button>
-          </div>
-          <div class="flex-between" style="margin-top: 10px;">
-            <span style="color: #7ab4ff; font-weight: bold;">${sym}${goal.current} / ${sym}${goal.target}</span>
-            <span style="color: #ff80c0; font-size: 0.85rem;">Reward: ${rewardText}</span>
-          </div>
+      container.innerHTML += `<div class="card">
+          <div class="flex-between"><span>${goal.name} (${sym}${goal.target})</span><button class="btn-scrap" onclick="deleteGoal(${i})">Scrap</button></div>
+          <div class="flex-between"><span>${sym}${goal.current} / ${sym}${goal.target}</span><span>Reward: ${sym}${goal.reward}</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%;"></div></div>
-          <div class="flex-between" style="margin: 0 -5px;">
-            <button class="btn btn-green" onclick="modifyGoal(${index}, 5)">+5</button>
-            <button class="btn btn-green" onclick="modifyGoal(${index}, 10)">+10</button>
-            <button class="btn btn-green" onclick="modifyGoal(${index}, 20)">+20</button>
-          </div>
-          <div class="input-group" style="margin-top: 10px;">
-            <input type="number" id="custom-goal-${index}" placeholder="Amt">
-            <button class="btn btn-green" style="margin:0; flex:0.5;" onclick="injectGoal(${index}, true)">Add</button>
-            <button class="btn btn-red" style="margin:0; flex:0.5;" onclick="injectGoal(${index}, false)">Rem</button>
-          </div>
-          <button class="btn btn-red" style="display:${goal.current >= goal.target ? 'block' : 'none'}; width: 100%; margin-top: 15px;" onclick="claimGoal(${index})">Claim ${rewardText}</button>
-        </div>`;
+          <div class="flex-between"><button class="btn btn-green" onclick="modifyGoal(${i}, 5)">+5</button><button class="btn btn-green" onclick="modifyGoal(${i}, 10)">+10</button></div>
+          <div class="input-group"><input type="number" id="c-g-${i}" placeholder="Amt"><button class="btn btn-green" onclick="injectGoal(${i}, true)">Add</button></div>
+          <button class="btn btn-red" style="display:${goal.current >= goal.target ? 'block' : 'none'}; width:100%;" onclick="claimGoal(${i})">Claim</button>
+      </div>`;
     });
   }
 
-  window.modifyGoal = (index, amt) => { savingsGoals[index].current += amt; renderGoals(); saveToCloud(); };
-  window.injectGoal = (index, add) => {
-    let inp = document.getElementById(`custom-goal-${index}`);
-    let val = parseInt(inp.value);
-    if (!isNaN(val)) { savingsGoals[index].current += add ? val : -val; inp.value = ''; renderGoals(); saveToCloud(); }
+  window.modifyGoal = (i, amt) => { savingsGoals[i].current += amt; renderGoals(); saveToCloud(); };
+  window.injectGoal = (i, add) => { 
+    let inp = document.getElementById(`c-g-${i}`); 
+    let v = parseInt(inp.value); if(!isNaN(v)){ savingsGoals[i].current += add ? v : -v; inp.value=''; renderGoals(); saveToCloud(); }
   };
-  window.claimGoal = (index) => { if (savingsGoals[index].current >= savingsGoals[index].target) { savingsGoals[index].current -= savingsGoals[index].target; renderGoals(); saveToCloud(); } };
-  window.deleteGoal = (index) => { if (confirm("Scrap goal?")) { savingsGoals.splice(index, 1); renderGoals(); saveToCloud(); } };
+  window.claimGoal = (i) => { if(savingsGoals[i].current >= savingsGoals[i].target){ savingsGoals[i].current -= savingsGoals[i].target; renderGoals(); saveToCloud(); } };
+  window.deleteGoal = (i) => { if(confirm("Scrap?")){ savingsGoals.splice(i, 1); renderGoals(); saveToCloud(); } };
 
   window.createGoal = () => {
     let name = document.getElementById('new-goal-name').value;
@@ -308,45 +290,31 @@
     let isCurr = document.getElementById('new-goal-is-currency').checked;
     if (name && target > 0) {
       savingsGoals.push({ id: Date.now().toString(), name, current: 0, target, reward, isCurrency: isCurr });
-      document.getElementById('new-goal-name').value = ''; renderGoals(); saveToCloud(); closeSettings();
+      document.getElementById('new-goal-name').value=''; renderGoals(); saveToCloud(); closeSettings();
     }
   }
 
   function renderContracts() {
     const container = document.getElementById('contracts-container');
-    container.innerHTML = contracts.length === 0 ? '<div style="color: #555; font-style: italic;">No active contracts.</div>' : '';
-    contracts.forEach((c, index) => {
-      container.innerHTML += `
-        <div class="card">
-          <div class="flex-between" style="border-bottom: 1px solid #2d244a; padding-bottom: 8px;">
-            <span style="color: #bba2ff; font-size: 0.9rem;">${c.task} <span style="color: #555;">=</span> ${c.reward}</span>
-            <button class="btn-scrap" onclick="deleteContract(${index})">Scrap</button>
-          </div>
-          <div class="flex-between">
-            <button class="btn btn-green" onclick="modifyBalance(${index}, ${c.earnRate || 1})">Task Done</button>
-            <span class="balance-display">${c.balance || 0}</span>
-            <button class="btn btn-red" onclick="modifyBalance(${index}, -${c.costRate || 1})">Claim</button>
-          </div>
-          <div style="text-align: center; margin-top: 8px; color: #7ab4ff; font-size: 0.85rem; text-transform: uppercase;">INVENTORY: ${c.reward}</div>
+    container.innerHTML = contracts.length === 0 ? '<div style="color:#555;">No contracts.</div>' : '';
+    contracts.forEach((c, i) => {
+      container.innerHTML += `<div class="card">
+          <div class="flex-between"><span>${c.task} = ${c.reward}</span><button class="btn-scrap" onclick="deleteContract(${i})">Scrap</button></div>
+          <div class="flex-between"><button class="btn btn-green" onclick="modifyBalance(${i}, ${c.earnRate || 1})">Task Done</button><span class="balance-display">${c.balance || 0}</span><button class="btn btn-red" onclick="modifyBalance(${i}, -${c.costRate || 1})">Claim</button></div>
         </div>`;
     });
   }
 
-  window.modifyBalance = (index, amt) => {
-    let bal = (contracts[index].balance || 0) + amt;
-    if (bal >= 0) { contracts[index].balance = bal; renderContracts(); saveToCloud(); }
-  };
-  window.deleteContract = (index) => { if (confirm("Scrap contract?")) { contracts.splice(index, 1); renderContracts(); saveToCloud(); } };
+  window.modifyBalance = (i, amt) => { let b = (contracts[i].balance || 0) + amt; if(b >= 0){ contracts[i].balance = b; renderContracts(); saveToCloud(); } };
+  window.deleteContract = (i) => { if(confirm("Scrap?")){ contracts.splice(i, 1); renderContracts(); saveToCloud(); } };
 
   window.createContract = () => {
-    let t = document.getElementById('new-task').value;
-    let r = document.getElementById('new-reward').value;
-    let e = parseInt(document.getElementById('new-earn').value) || 1;
-    let c = parseInt(document.getElementById('new-cost').value) || 1;
+    let t = document.getElementById('new-task').value; let r = document.getElementById('new-reward').value;
+    let e = parseInt(document.getElementById('new-earn').value) || 1; let c = parseInt(document.getElementById('new-cost').value) || 1;
     if (t && r) {
       contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: e, costRate: c });
-      document.getElementById('new-task').value = ''; document.getElementById('new-reward').value = '';
-      document.getElementById('new-earn').value = ''; document.getElementById('new-cost').value = '';
+      document.getElementById('new-task').value=''; document.getElementById('new-reward').value='';
+      document.getElementById('new-earn').value=''; document.getElementById('new-cost').value='';
       renderContracts(); saveToCloud(); closeSettings();
     }
   }
