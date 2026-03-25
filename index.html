@@ -239,8 +239,6 @@
     }
   }
 
-  // Replace your renderGoals() function in the script with this updated version:
-
 function renderGoals() {
     const container = document.getElementById('savings-container');
     container.innerHTML = savingsGoals.length === 0 ? '<div style="color:#555;">No goals.</div>' : '';
@@ -269,10 +267,10 @@ function renderGoals() {
             <button class="btn btn-green" onclick="modifyGoal(${i}, 20)">+20</button>
           </div>
           
-          <div class="input-group" style="margin-top: 10px; gap: 5px;">
-            <input type="number" id="c-g-${i}" placeholder="Amt" style="margin:0; flex: 2;">
-            <button class="btn btn-green" style="margin:0; flex: 1; padding: 12px 5px;" onclick="injectGoal(${i}, true)">Add</button>
-            <button class="btn btn-red" style="margin:0; flex: 1; padding: 12px 5px;" onclick="injectGoal(${i}, false)">Rem</button>
+          <div class="input-group" style="margin-top: 10px; display: flex; gap: 5px;">
+            <input type="number" id="c-g-${i}" placeholder="AMT" style="margin: 0; flex: 1.5; min-width: 0;">
+            <button class="btn btn-green" style="margin: 0; flex: 1; padding: 12px 0;" onclick="injectGoal(${i}, true)">Add</button>
+            <button class="btn btn-red" style="margin: 0; flex: 1; padding: 12px 0;" onclick="injectGoal(${i}, false)">Rem</button>
           </div>
           
           <button class="btn btn-red" style="display:${goal.current >= goal.target ? 'block' : 'none'}; width:100%; margin-top:10px;" onclick="claimGoal(${i})">Claim ${rewardText}</button>
