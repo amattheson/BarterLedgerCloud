@@ -51,6 +51,9 @@
   
   input { background: #09090e; border: 1px solid #2d244a; color: #e0e0f0; padding: 12px; border-radius: 6px; width: 100%; font-size: 1rem; box-sizing: border-box; margin-bottom: 10px; }
 
+  .checkbox-wrapper { display: flex; align-items: center; cursor: pointer; gap: 10px; color: #bba2ff; font-size: 0.9rem; margin-bottom: 15px; }
+  .checkbox-wrapper input { width: 20px; height: 20px; flex-shrink: 0; accent-color: #0088ff; }
+
   .drawer-btn { background: #11111a; border: 1px solid #2d244a; color: #bba2ff; width: 100%; margin: 0 0 10px 0; padding: 14px; border-radius: 6px; font-weight: bold; text-align: left; cursor: pointer; }
 
   #settings-panel { 
@@ -100,21 +103,24 @@
       
       <button class="drawer-btn" onclick="toggleDrawer('goal-drawer')">+ Forge New Goal</button>
       <div id="goal-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #0088ff; margin-bottom: 10px;">
-        <input type="text" id="new-goal-name" placeholder="Goal Name (e.g., Personal Budget)">
+        <input type="text" id="new-goal-name" placeholder="Goal Name">
         <div style="display:flex; gap:10px;">
-            <input type="number" id="new-goal-target" placeholder="Target ($)">
-            <input type="number" id="new-goal-reward" placeholder="Reward ($)">
+            <input type="number" id="new-goal-target" placeholder="Target">
+            <input type="number" id="new-goal-reward" placeholder="Reward">
         </div>
+        <label class="checkbox-wrapper">
+            <input type="checkbox" id="new-goal-is-currency" checked> <span>Use Currency ($)</span>
+        </label>
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
 
       <button class="drawer-btn" onclick="toggleDrawer('contract-drawer')">+ Forge New Contract</button>
       <div id="contract-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
-        <input type="text" id="new-task" placeholder="The Chore (e.g., Study 1hr)">
-        <input type="text" id="new-reward" placeholder="The Reward (e.g., YouTube 10min)">
+        <input type="text" id="new-task" placeholder="The Chore">
+        <input type="text" id="new-reward" placeholder="The Reward">
         <div style="display:flex; gap:10px;">
-            <input type="number" id="new-earn" placeholder="Earn amt (Default: 1)">
-            <input type="number" id="new-cost" placeholder="Claim cost (Default: 1)">
+            <input type="number" id="new-earn" placeholder="Earn amt">
+            <input type="number" id="new-cost" placeholder="Claim cost">
         </div>
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createContract()">Lock It In</button>
       </div>
@@ -123,8 +129,8 @@
 
       <button class="drawer-btn" style="color: #0088ff; border-color: rgba(0, 136, 255, 0.3);" onclick="toggleDrawer('install-drawer')">📲 Install App</button>
       <div id="install-drawer" style="display: none; padding: 10px; border-left: 2px solid #0088ff; margin-bottom: 10px; font-size: 0.85rem; color: #bba2ff;">
-        <p><strong>iOS/Safari:</strong> Tap <strong>Share</strong> (square with arrow) and <strong>Add to Home Screen</strong>.</p>
-        <p><strong>Android/Chrome:</strong> Tap <strong>(⋮)</strong> and <strong>Install app</strong>.</p>
+        <p><strong>iOS/Safari:</strong> Tap <strong>Share</strong> and <strong>Add to Home Screen</strong>.</p>
+        <p><strong>Android:</strong> Tap <strong>(⋮)</strong> and <strong>Install app</strong>.</p>
       </div>
 
       <button class="drawer-btn" style="color: #ff0080;" onclick="toggleDrawer('nuke-drawer')">⚠ Danger Zone</button>
@@ -238,9 +244,11 @@
     container.innerHTML = savingsGoals.length === 0 ? '<div style="color:#555;">No goals.</div>' : '';
     savingsGoals.forEach((goal, i) => {
       let percent = Math.min((goal.current / goal.target) * 100, 100);
+      let sym = goal.isCurrency ? '$' : '';
+      let rewardText = goal.isCurrency ? `$${goal.reward}` : `${goal.reward} units`;
       container.innerHTML += `<div class="card">
-          <div class="flex-between"><span>${goal.name} ($${goal.target})</span><button class="btn-scrap" onclick="deleteGoal(${i})">Scrap</button></div>
-          <div class="flex-between"><span>$${goal.current} / $${goal.target}</span><span>Reward: $${goal.reward}</span></div>
+          <div class="flex-between"><span>${goal.name} (${sym}${goal.target})</span><button class="btn-scrap" onclick="deleteGoal(${i})">Scrap</button></div>
+          <div class="flex-between"><span>${sym}${goal.current} / ${sym}${goal.target}</span><span>Reward: ${rewardText}</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%;"></div></div>
           <div class="flex-between"><button class="btn btn-green" onclick="modifyGoal(${i}, 5)">+5</button><button class="btn btn-green" onclick="modifyGoal(${i}, 10)">+10</button></div>
           <div class="input-group" style="margin-top:10px;"><input type="number" id="c-g-${i}" placeholder="Amt" style="margin:0;"><button class="btn btn-green" onclick="injectGoal(${i}, true)">Add</button></div>
@@ -261,8 +269,9 @@
     let name = document.getElementById('new-goal-name').value;
     let target = parseInt(document.getElementById('new-goal-target').value);
     let reward = parseInt(document.getElementById('new-goal-reward').value) || 0;
+    let isCurr = document.getElementById('new-goal-is-currency').checked;
     if (name && target > 0) {
-      savingsGoals.push({ id: Date.now().toString(), name, current: 0, target, reward, isCurrency: true });
+      savingsGoals.push({ id: Date.now().toString(), name, current: 0, target, reward, isCurrency: isCurr });
       document.getElementById('new-goal-name').value=''; renderGoals(); saveToCloud(); closeSettings();
     }
   }
