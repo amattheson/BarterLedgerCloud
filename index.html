@@ -53,21 +53,14 @@
 
   .drawer-btn { background: #11111a; border: 1px solid #2d244a; color: #bba2ff; width: 100%; margin: 0 0 10px 0; padding: 14px; border-radius: 6px; font-weight: bold; text-align: left; cursor: pointer; }
 
-  /* FULL SCREEN CONFIG PANEL */
   #settings-panel { 
-    display: none; 
-    position: fixed; 
-    top: 0; left: 0; width: 100%; height: 100%; 
-    background: #09090e; 
-    z-index: 5000; 
-    padding: 100px 20px 40px 20px;
-    box-sizing: border-box;
-    overflow-y: auto;
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: #09090e; z-index: 5000; padding: 100px 20px 40px 20px;
+    box-sizing: border-box; overflow-y: auto;
   }
 
   .about-text { font-size: 0.95rem; line-height: 1.5; color: #d5d6e2; margin-bottom: 25px; }
   .subtext { font-size: 0.75rem; color: #666; font-style: italic; margin-top: 10px; display: block; }
-
   .user-profile { display: flex; align-items: center; gap: 12px; margin-top: 25px; padding-top: 20px; border-top: 1px solid #2d244a; color: #888; font-size: 0.85rem; }
   .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #0088ff; }
 
@@ -86,7 +79,6 @@
         
         <div class="about-text" style="text-align: left; padding: 10px; border-left: 1px solid #2d244a; margin-top: 20px;">
             <span style="color: #bba2ff; font-weight: bold; display: block; margin-bottom: 10px; font-family: 'Cinzel', serif;">"Stop fighting your nature. Start negotiating with it."</span>
-            
             Quitting is a fantasy; mastery is a trade. For years, we’ve been told to suppress our desires to find discipline, but the engine of progress runs on better fuel. <strong>Your habits are the ultimate currency for motivation.</strong> 
             <br><br>
             This isn't about deprivation—it's about leverage. Barter an hour of deep study for ten minutes of digital noise. Earn the snack with the workout; fund the weekend splurge with a week of restraint. 
@@ -94,15 +86,11 @@
             When you stop resisting your vices and start using them as high-stakes rewards, you stop failing and start performing.
             <br><br>
             <span style="color: #0088ff; font-family: 'Cinzel', serif; font-weight: bold;">Better yourself by bartering with yourself.</span>
-            
             <span class="subtext" style="margin-top: 25px; border-top: 1px solid #2d244a; padding-top: 10px;">
                 Encryption active. We require Google authentication to secure your private ledger.
             </span>
         </div>
-
-        <button class="btn btn-google" style="margin-top: 30px; border: 1px solid #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.3);" onclick="handleGoogleLogin()">
-            Authenticate System Access
-        </button>
+        <button class="btn btn-google" style="margin-top: 30px; border: 1px solid #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.3);" onclick="handleGoogleLogin()">Authenticate System Access</button>
     </div>
   </div>
 
@@ -112,22 +100,32 @@
       
       <button class="drawer-btn" onclick="toggleDrawer('goal-drawer')">+ Forge New Goal</button>
       <div id="goal-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #0088ff; margin-bottom: 10px;">
-        <input type="text" id="new-goal-name" placeholder="Goal Name">
+        <input type="text" id="new-goal-name" placeholder="Goal Name (e.g., Personal Budget)">
         <div style="display:flex; gap:10px;">
-            <input type="number" id="new-goal-target" placeholder="Target">
-            <input type="number" id="new-goal-reward" placeholder="Reward">
+            <input type="number" id="new-goal-target" placeholder="Target ($)">
+            <input type="number" id="new-goal-reward" placeholder="Reward ($)">
         </div>
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createGoal()">Construct Goal</button>
       </div>
 
       <button class="drawer-btn" onclick="toggleDrawer('contract-drawer')">+ Forge New Contract</button>
       <div id="contract-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
-        <input type="text" id="new-task" placeholder="The Chore">
-        <input type="text" id="new-reward" placeholder="The Reward">
+        <input type="text" id="new-task" placeholder="The Chore (e.g., Study 1hr)">
+        <input type="text" id="new-reward" placeholder="The Reward (e.g., YouTube 10min)">
+        <div style="display:flex; gap:10px;">
+            <input type="number" id="new-earn" placeholder="Earn amt (Default: 1)">
+            <input type="number" id="new-cost" placeholder="Claim cost (Default: 1)">
+        </div>
         <button class="btn btn-green" style="width: 100%; margin: 0;" onclick="createContract()">Lock It In</button>
       </div>
 
       <button class="drawer-btn" style="color: #ff80c0;" onclick="location.href='mailto:support@barteryourself.com?subject=Bug Report'">🪲 Report a Bug</button>
+
+      <button class="drawer-btn" style="color: #0088ff; border-color: rgba(0, 136, 255, 0.3);" onclick="toggleDrawer('install-drawer')">📲 Install App</button>
+      <div id="install-drawer" style="display: none; padding: 10px; border-left: 2px solid #0088ff; margin-bottom: 10px; font-size: 0.85rem; color: #bba2ff;">
+        <p><strong>iOS/Safari:</strong> Tap <strong>Share</strong> (square with arrow) and <strong>Add to Home Screen</strong>.</p>
+        <p><strong>Android/Chrome:</strong> Tap <strong>(⋮)</strong> and <strong>Install app</strong>.</p>
+      </div>
 
       <button class="drawer-btn" style="color: #ff0080;" onclick="toggleDrawer('nuke-drawer')">⚠ Danger Zone</button>
       <div id="nuke-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
@@ -271,7 +269,7 @@
 
   function renderContracts() {
     const container = document.getElementById('contracts-container');
-    container.innerHTML = contracts.length === 0 ? '<div style="color:#555;">No contracts.</div>' : '';
+    container.innerHTML = contracts.length === 0 ? '<div style="color:#555;">No active contracts.</div>' : '';
     contracts.forEach((c, i) => {
       container.innerHTML += `<div class="card">
           <div class="flex-between"><span>${c.task} = ${c.reward}</span><button class="btn-scrap" onclick="deleteContract(${i})">Scrap</button></div>
@@ -284,10 +282,16 @@
   window.deleteContract = (i) => { if(confirm("Scrap?")){ contracts.splice(i, 1); renderContracts(); saveToCloud(); } };
 
   window.createContract = () => {
-    let t = document.getElementById('new-task').value; let r = document.getElementById('new-reward').value;
+    let t = document.getElementById('new-task').value; 
+    let r = document.getElementById('new-reward').value;
+    let e = parseInt(document.getElementById('new-earn').value) || 1;
+    let c = parseInt(document.getElementById('new-cost').value) || 1;
     if (t && r) {
-      contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: 1, costRate: 1 });
-      document.getElementById('new-task').value=''; document.getElementById('new-reward').value='';
+      contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: e, costRate: c });
+      document.getElementById('new-task').value=''; 
+      document.getElementById('new-reward').value='';
+      document.getElementById('new-earn').value='';
+      document.getElementById('new-cost').value='';
       renderContracts(); saveToCloud(); closeSettings();
     }
   }
