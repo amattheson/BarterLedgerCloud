@@ -118,16 +118,14 @@
       <div id="contract-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
         <input type="text" id="new-task" placeholder="The Chore">
         <input type="text" id="new-reward" placeholder="The Reward">
+        <input type="number" id="new-earn" placeholder="Earn Rate (Def: 1)">
+        <input type="number" id="new-cost" placeholder="Claim Cost (Def: 1)">
         
         <label class="checkbox-wrapper" onclick="toggleDrawer('contract-adv-options')">
             <input type="checkbox" id="new-contract-adv-toggle"> <span>Advanced Options</span>
         </label>
 
         <div id="contract-adv-options" style="display: none; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 6px; margin-bottom: 15px;">
-            <div style="display:flex; gap:10px;">
-                <input type="number" id="new-earn" placeholder="Earn Rate (Def: 1)">
-                <input type="number" id="new-cost" placeholder="Claim Cost (Def: 1)">
-            </div>
             <label class="checkbox-wrapper">
                 <input type="checkbox" id="new-contract-perish"> <span>Perishable (Hours: <input type="number" id="new-contract-perish-hrs" value="24" style="display:inline; width:50px; padding:2px; margin:0;">)</span>
             </label>
@@ -280,7 +278,7 @@
           <div class="flex-between"><span>${sym}${goal.current} / ${sym}${goal.target}</span><span>Reward: ${sym}${goal.reward}</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%;"></div></div>
           <div class="flex-between"><button class="btn btn-green" onclick="modifyGoal(${i}, 5)">+5</button><button class="btn btn-green" onclick="modifyGoal(${i}, 10)">+10</button><button class="btn btn-green" onclick="modifyGoal(${i}, 20)">+20</button></div>
-          <div class="input-group" style="margin-top:10px;"><input type="number" id="c-g-${i}" placeholder="AMT" style="flex:1.5;"><button class="btn btn-green" onclick="injectGoal(${i}, true)">Add</button><button class="btn btn-red" onclick="injectGoal(${i}, false)">Rem</button></div>
+          <div class="input-group" style="margin-top:10px;"><input type="number" id="c-g-${i}" placeholder="Custom Amount" style="flex:1.5;"><button class="btn btn-green" onclick="injectGoal(${i}, true)">Add</button><button class="btn btn-red" onclick="injectGoal(${i}, false)">Rem</button></div>
           <button class="btn btn-red" style="display:${goal.current >= goal.target ? 'block' : 'none'}; width:100%; margin-top:10px;" onclick="claimGoal(${i})">Claim</button>
       </div>`;
     });
