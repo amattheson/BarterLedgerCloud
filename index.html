@@ -26,7 +26,7 @@
     z-index: 1000; margin: 0; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
   }
 
-  h2 { color: #bba2ff; font-weight: 400; font-size: 1.2rem; margin-top: 30px; border-bottom: 1px dashed #2d244a; padding-bottom: 5px; }
+  h2 { color: #bba2ff; font-weight: 400; font-size: 1.2rem; margin-top: 30px; border-bottom: 1px dashed #2d244a; padding-bottom: 5px; text-shadow: 0 0 8px rgba(187, 162, 255, 0.3); }
   
   .card { 
     background: #11111a; padding: 15px; border-radius: 8px; margin-bottom: 15px; 
@@ -43,8 +43,12 @@
   }
   
   .btn-green { background: rgba(0, 136, 255, 0.1); border-color: #0088ff; color: #80c4ff; }
+  .btn-green:active { background: #0088ff; color: #fff; box-shadow: 0 0 15px #0088ff; }
   .btn-red { background: rgba(255, 0, 128, 0.1); border-color: #ff0080; color: #ff80c0; }
-  .btn-scrap { background: transparent; border: 1px solid rgba(255, 0, 128, 0.5); color: #ff80c0; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; }
+  .btn-red:active { background: #ff0080; color: #fff; box-shadow: 0 0 15px #ff0080; }
+
+  .btn-google { background: #e0e0f0; color: #09090e; border-color: #fff; margin-top: 15px; width: 100%; box-shadow: 0 0 10px rgba(255,255,255,0.2); padding: 15px; font-size: 1rem; }
+  .btn-scrap { background: transparent; border: 1px solid rgba(255, 0, 128, 0.5); color: #ff80c0; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s ease; }
 
   .progress-bar { background: #09090e; border-radius: 4px; height: 12px; width: 100%; margin: 15px 0; overflow: hidden; border: 1px solid #2d244a; }
   .progress-fill { background: linear-gradient(90deg, #0088ff, #ff0080); height: 100%; width: 0%; transition: width 0.4s ease; }
@@ -105,8 +109,8 @@
       <div id="goal-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #0088ff; margin-bottom: 10px;">
         <input type="text" id="new-goal-name" placeholder="Goal Name">
         <div style="display:flex; gap:10px;">
-            <input type="number" id="new-goal-target" placeholder="Target">
-            <input type="number" id="new-goal-reward" placeholder="Reward">
+            <input type="number" id="new-goal-target" placeholder="Target ($)" style="flex:1;">
+            <input type="number" id="new-goal-reward" placeholder="Reward ($)" style="flex:1;">
         </div>
         <label class="checkbox-wrapper">
             <input type="checkbox" id="new-goal-is-currency" checked> <span>Use Currency ($)</span>
@@ -116,16 +120,21 @@
 
       <button class="drawer-btn" onclick="toggleDrawer('contract-drawer')">+ Forge New Contract</button>
       <div id="contract-drawer" style="display: none; padding: 10px 0 15px 10px; border-left: 2px solid #ff0080; margin-bottom: 10px;">
-        <input type="text" id="new-task" placeholder="The Chore">
-        <input type="text" id="new-reward" placeholder="The Reward">
-        <input type="number" id="new-earn" placeholder="Earn Rate (Def: 1)">
-        <input type="number" id="new-cost" placeholder="Claim Cost (Def: 1)">
         
-        <label class="checkbox-wrapper" onclick="toggleDrawer('contract-adv-options')">
-            <input type="checkbox" id="new-contract-adv-toggle"> <span>Advanced Options</span>
+        <div style="display:flex; gap:10px;">
+            <input type="text" id="new-task" placeholder="The Chore" style="flex:1;">
+            <input type="text" id="new-reward" placeholder="The Reward" style="flex:1;">
+        </div>
+        
+        <label class="checkbox-wrapper" style="margin-bottom:15px;">
+            <input type="checkbox" id="new-contract-adv-toggle" onchange="toggleDrawer('contract-adv-options')"> <span>Advanced Options</span>
         </label>
 
         <div id="contract-adv-options" style="display: none; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 6px; margin-bottom: 15px;">
+            <div style="display:flex; gap:10px;">
+                <input type="number" id="new-earn" placeholder="Earn Rate" style="flex:1;">
+                <input type="number" id="new-cost" placeholder="Claim Cost" style="flex:1;">
+            </div>
             <label class="checkbox-wrapper">
                 <input type="checkbox" id="new-contract-perish"> <span>Perishable (Hours: <input type="number" id="new-contract-perish-hrs" value="24" style="display:inline; width:50px; padding:2px; margin:0;">)</span>
             </label>
@@ -278,7 +287,7 @@
           <div class="flex-between"><span>${sym}${goal.current} / ${sym}${goal.target}</span><span>Reward: ${sym}${goal.reward}</span></div>
           <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%;"></div></div>
           <div class="flex-between"><button class="btn btn-green" onclick="modifyGoal(${i}, 5)">+5</button><button class="btn btn-green" onclick="modifyGoal(${i}, 10)">+10</button><button class="btn btn-green" onclick="modifyGoal(${i}, 20)">+20</button></div>
-          <div class="input-group" style="margin-top:10px;"><input type="number" id="c-g-${i}" placeholder="Custom Amount" style="flex:1.5;"><button class="btn btn-green" onclick="injectGoal(${i}, true)">Add</button><button class="btn btn-red" onclick="injectGoal(${i}, false)">Rem</button></div>
+          <div class="input-group" style="margin-top:10px;"><input type="number" id="c-g-${i}" placeholder="AMT" style="flex:1.5;"><button class="btn btn-green" onclick="injectGoal(${i}, true)">Add</button><button class="btn btn-red" onclick="injectGoal(${i}, false)">Rem</button></div>
           <button class="btn btn-red" style="display:${goal.current >= goal.target ? 'block' : 'none'}; width:100%; margin-top:10px;" onclick="claimGoal(${i})">Claim</button>
       </div>`;
     });
@@ -287,7 +296,7 @@
   window.modifyBalance = (i, amt) => { 
     let c = contracts[i];
     if (amt > 0) {
-        if (c.limitOne && c.balance >= 1) { return; } // Electronic Lock
+        if (c.limitOne && c.balance >= 1) { return; }
         c.balance = (c.balance || 0) + amt;
         c.lastEarned = Date.now();
     } else {
@@ -325,6 +334,16 @@
 
     if (t && r) {
       contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: e, costRate: c, perishHrs: perish, limitOne: limit });
+      
+      // Cleanup inputs
+      document.getElementById('new-task').value=''; 
+      document.getElementById('new-reward').value='';
+      document.getElementById('new-earn').value='';
+      document.getElementById('new-cost').value='';
+      document.getElementById('new-contract-adv-toggle').checked = false;
+      document.getElementById('new-contract-perish').checked = false;
+      document.getElementById('new-contract-limit').checked = false;
+
       renderContracts(); saveToCloud(); closeSettings();
     }
   }
