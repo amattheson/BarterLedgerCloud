@@ -303,7 +303,7 @@ function renderGoals() {
     contracts.forEach((c, i) => {
       container.innerHTML += `<div class="card">
           <div class="flex-between"><span>${c.task} = ${c.reward}</span><button class="btn-scrap" onclick="deleteContract(${i})">Scrap</button></div>
-          <div class="flex-between"><button class="btn btn-green" onclick="modifyBalance(${i}, ${c.earnRate || 1})">Done</button><span class="balance-display">${c.balance || 0}</span><button class="btn btn-red" onclick="modifyBalance(${i}, -${c.costRate || 1})">Claim</button></div>
+          <div class="flex-between"><button class="btn btn-green" onclick="modifyBalance(${i}, ${c.earnRate || 1})">Complete</button><span class="balance-display">${c.balance || 0}</span><button class="btn btn-red" onclick="modifyBalance(${i}, -${c.costRate || 1})">Claim</button></div>
         </div>`;
     });
   }
