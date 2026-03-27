@@ -73,56 +73,85 @@
 
   #app-screen { display: none; }
   #auth-screen { 
-    display: block; 
+    display: flex; /* Flexbox for centering */
+    align-items: center; 
+    justify-content: center;
     position: fixed;
     top: 0; left: 0;
-    width: 100%; height: 100%;
-    /* Layer 1: The Icon | Layer 2: A dark radial fade to black out the edges */
+    width: 100vw; height: 100vh;
     background: 
-      radial-gradient(circle, rgba(9,9,14,0.7) 0%, rgba(9,9,14,1) 100%),
+      radial-gradient(circle, rgba(9,9,14,0.6) 0%, rgba(9,9,14,1) 90%),
       url('icon.png') no-repeat center center;
     background-size: cover;
     z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: 20px;
     box-sizing: border-box;
   }
-.auth-card {
-    background: rgba(17, 17, 26, 0.85); 
-    backdrop-filter: blur(10px); /* Blurs the wrench behind the card */
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(187, 162, 255, 0.3);
+
+  /* 2. Neon Gradient Border Card */
+  .auth-card {
+    background: rgba(17, 17, 26, 0.9); 
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    
+    /* Neon Gradient Border Trick */
+    padding: 2px; /* This creates the border thickness */
+    background-image: linear-gradient(135deg, #0088ff, #ff0080); 
     border-radius: 12px;
-    padding: 30px;
+    
     max-width: 450px;
     width: 100%;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(138, 43, 226, 0.2);
-    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 136, 255, 0.2), 0 0 50px rgba(255, 0, 128, 0.2);
+    position: relative;
+  }
+
+  /* This inner div ensures the content has the correct background */
+  .auth-card-inner {
+    background: #11111a; 
+    border-radius: 10px; /* Slightly smaller to fit inside the gradient padding */
+    padding: 30px;
+  }
+
+  /* 3. Unified Text Block */
+  .about-text { 
+    font-size: 0.95rem; 
+    line-height: 1.6; 
+    color: #d5d6e2; 
+    margin-top: 25px; 
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03); /* Subtle lift, matching the menu vibe */
+    border-radius: 6px;
+    border-left: none; /* Red line removed as requested */
   }
 </style>
 
 <div id="auth-screen">
   <div class="auth-card">
-      <h1 style="position: static; border: none; box-shadow: none; background: transparent; padding: 0 0 10px 0; font-size: 2rem; color: #fff;">
-        The Barter Ledger
-      </h1>
-      <h2 style="margin-top:0; border:none; text-align: center; color: #bba2ff; letter-spacing: 2px; font-size: 1rem; text-transform: uppercase;">
-        System Entry
-      </h2>
-      
-      <div class="about-text" style="text-align: left; padding: 15px; border-left: 2px solid #ff0080; margin-top: 25px; background: rgba(0,0,0,0.4);">
-          <span style="color: #bba2ff; font-weight: bold; display: block; margin-bottom: 12px; font-family: 'Cinzel', serif; font-size: 1rem; line-height: 1.4;">
-              "Mastery is a trade. Discipline is the work; desire is the pay."
-          </span>
-          
-          Most systems fail because they rely on suppression. The Barter Ledger operates on a different logic: <strong>Your habits are the ultimate currency for motivation.</strong> 
-          <br><br>
-          By treating your nature as a partner rather than an enemy, you stop resisting and start performing.
-          <br><br>
-          <span style="color: #0088ff; font-family: 'Cinzel', serif; font-weight: bold;">Embrace your shadows. Use them as leverage.</span>
-      </div>
+    <div class="auth-card-inner">
+        <h1 style="position: static; border: none; box-shadow: none; background: transparent; padding: 0 0 10px 0; font-size: 2rem; color: #fff; text-align: center;">
+          The Barter Ledger
+        </h1>
+        <h2 style="margin-top:0; border:none; text-align: center; color: #bba2ff; letter-spacing: 2px; font-size: 0.9rem; text-transform: uppercase;">
+          System Entry
+        </h2>
+        
+        <div class="about-text">
+            <span style="color: #bba2ff; font-weight: bold; display: block; margin-bottom: 12px; font-family: 'Cinzel', serif; font-size: 1rem;">
+                "Mastery is a trade. Discipline is the work; desire is the pay."
+            </span>
+            
+            Most systems fail because they rely on suppression. The Barter Ledger operates on a different logic: <strong>Your habits are the ultimate currency for motivation.</strong> 
+            <br><br>
+            By treating your nature as a partner rather than an enemy, you stop resisting and start performing.
+            <br><br>
+            <span style="color: #0088ff; font-family: 'Cinzel', serif; font-weight: bold;">Embrace your shadows. Use them as leverage.</span>
+        </div>
+
+        <button class="btn btn-google" style="margin-top: 35px; border: 1px solid #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.3); padding: 18px; font-weight: bold; width: 100%;" onclick="handleGoogleLogin()">
+            Authenticate System Access
+        </button>
+    </div>
+  </div>
 
       <button class="btn btn-google" style="margin-top: 35px; border: 1px solid #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.3); padding: 18px; font-weight: bold;" onclick="handleGoogleLogin()">
           Authenticate System Access
