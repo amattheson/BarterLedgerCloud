@@ -72,34 +72,63 @@
   .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #0088ff; }
 
   #app-screen { display: none; }
-  #auth-screen { display: block; max-width: 400px; margin: 60px auto; text-align: center; }
+  #auth-screen { 
+    display: block; 
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    /* Layer 1: The Icon | Layer 2: A dark radial fade to black out the edges */
+    background: 
+      radial-gradient(circle, rgba(9,9,14,0.7) 0%, rgba(9,9,14,1) 100%),
+      url('icon.png') no-repeat center center;
+    background-size: cover;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+.auth-card {
+    background: rgba(17, 17, 26, 0.85); 
+    backdrop-filter: blur(10px); /* Blurs the wrench behind the card */
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(187, 162, 255, 0.3);
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(138, 43, 226, 0.2);
+    text-align: center;
+  }
 </style>
-</head>
-<body>
 
-  <h1>The Barter Ledger</h1>
+<div id="auth-screen">
+  <div class="auth-card">
+      <h1 style="position: static; border: none; box-shadow: none; background: transparent; padding: 0 0 10px 0; font-size: 2rem; color: #fff;">
+        The Barter Ledger
+      </h1>
+      <h2 style="margin-top:0; border:none; text-align: center; color: #bba2ff; letter-spacing: 2px; font-size: 1rem; text-transform: uppercase;">
+        System Entry
+      </h2>
+      
+      <div class="about-text" style="text-align: left; padding: 15px; border-left: 2px solid #ff0080; margin-top: 25px; background: rgba(0,0,0,0.4);">
+          <span style="color: #bba2ff; font-weight: bold; display: block; margin-bottom: 12px; font-family: 'Cinzel', serif; font-size: 1rem; line-height: 1.4;">
+              "Mastery is a trade. Discipline is the work; desire is the pay."
+          </span>
+          
+          Most systems fail because they rely on suppression. The Barter Ledger operates on a different logic: <strong>Your habits are the ultimate currency for motivation.</strong> 
+          <br><br>
+          By treating your nature as a partner rather than an enemy, you stop resisting and start performing.
+          <br><br>
+          <span style="color: #0088ff; font-family: 'Cinzel', serif; font-weight: bold;">Embrace your shadows. Use them as leverage.</span>
+      </div>
 
-  <div id="auth-screen">
-    <div class="card" style="border-color: #bba2ff; box-shadow: 0 0 25px rgba(187, 162, 255, 0.1);">
-        <h1 style="position: static; border: none; box-shadow: none; background: transparent; padding: 10px 0;">The Barter Ledger</h1>
-        <h2 style="margin-top:0; border:none; text-align: center; color: #fff;">System Entry</h2>
-        
-        <div class="about-text" style="text-align: left; padding: 10px; border-left: 1px solid #2d244a; margin-top: 20px;">
-            <span style="color: #bba2ff; font-weight: bold; display: block; margin-bottom: 10px; font-family: 'Cinzel', serif;">"Stop fighting your nature. Start negotiating with it."</span>
-            Quitting is a fantasy; mastery is a trade. For years, we’ve been told to suppress our desires to find discipline, but the engine of progress runs on better fuel. <strong>Your habits are the ultimate currency for motivation.</strong> 
-            <br><br>
-            This isn't about deprivation—it's about leverage. Barter an hour of deep study for ten minutes of digital noise. Earn the snack with the workout; fund the weekend splurge with a week of restraint. 
-            <br><br>
-            When you stop resisting your vices and start using them as high-stakes rewards, you stop failing and start performing.
-            <br><br>
-            <span style="color: #0088ff; font-family: 'Cinzel', serif; font-weight: bold;">Better yourself by bartering with yourself.</span>
-            <span class="subtext" style="margin-top: 25px; border-top: 1px solid #2d244a; padding-top: 10px;">
-                Encryption active. We require Google authentication to secure your private ledger.
-            </span>
-        </div>
-        <button class="btn btn-google" style="margin-top: 30px; border: 1px solid #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.3);" onclick="handleGoogleLogin()">Authenticate System Access</button>
-    </div>
+      <button class="btn btn-google" style="margin-top: 35px; border: 1px solid #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.3); padding: 18px; font-weight: bold;" onclick="handleGoogleLogin()">
+          Authenticate System Access
+      </button>
   </div>
+</div>
 
   <div id="app-screen">
     <div id="settings-panel">
