@@ -66,21 +66,18 @@
     box-sizing: border-box; overflow-y: auto;
   }
 
-  .about-text { font-size: 0.95rem; line-height: 1.5; color: #d5d6e2; margin-bottom: 25px; }
-  .subtext { font-size: 0.75rem; color: #666; font-style: italic; margin-top: 10px; display: block; }
   .user-profile { display: flex; align-items: center; gap: 12px; margin-top: 25px; padding-top: 20px; border-top: 1px solid #2d244a; color: #888; font-size: 0.85rem; }
   .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #0088ff; }
 
-  #app-screen { display: none; }
- /* 1. The Full-Screen Overlays */
+  /* --- AUTH SCREEN OVERHAUL --- */
   #auth-screen { 
-    display: flex; 
+    display: none; /* Initially hidden, JS will set to 'flex' */
     align-items: center; 
     justify-content: center;
-    position: fixed; /* Fixes it to the viewport */
+    position: fixed;
     top: 0; left: 0;
     width: 100vw; 
-    height: 100dvh; /* Dynamic height for mobile browsers */
+    height: 100dvh;
     background: 
       radial-gradient(circle, rgba(9,9,14,0.6) 0%, rgba(9,9,14,1) 90%),
       url('icon.png') no-repeat center center;
@@ -88,18 +85,16 @@
     z-index: 9999;
     padding: 20px;
     box-sizing: border-box;
-    margin: 0; /* Remove any previous margins */
+    margin: 0 !important;
   }
 
-  /* 2. The Gradient Border Card */
   .auth-card {
     background: linear-gradient(135deg, #0088ff, #ff0080); 
-    padding: 2px; /* The border thickness */
+    padding: 2px; 
     border-radius: 12px;
     max-width: 450px;
     width: 100%;
     box-shadow: 0 0 30px rgba(0, 136, 255, 0.2), 0 0 50px rgba(255, 0, 128, 0.2);
-    display: block; /* Ensure it doesn't inherit flex properties incorrectly */
   }
 
   .auth-card-inner {
@@ -110,7 +105,6 @@
     -webkit-backdrop-filter: blur(12px);
   }
 
-  /* 3. The Text Block (Unified) */
   .about-text { 
     font-size: 0.95rem; 
     line-height: 1.6; 
@@ -119,11 +113,41 @@
     padding: 15px;
     background: rgba(255, 255, 255, 0.03); 
     border-radius: 6px;
-    text-align: left; /* Keep text readable */
+    text-align: left;
   }
-        <button class="btn btn-google" style="margin-top: 35px; border: 1px solid #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.3); padding: 18px; font-weight: bold; width: 100%;" onclick="handleGoogleLogin()">
-            Authenticate System Access
-        </button>
+
+  #app-screen { display: none; }
+</style>
+</head>
+<body>
+
+  <h1>The Barter Ledger</h1>
+
+  <div id="auth-screen">
+    <div class="auth-card">
+      <div class="auth-card-inner">
+          <h1 style="position: static; border: none; box-shadow: none; background: transparent; padding: 0 0 10px 0; font-size: 2rem; color: #fff; text-align: center;">
+            The Barter Ledger
+          </h1>
+          <h2 style="margin-top:0; border:none; text-align: center; color: #bba2ff; letter-spacing: 2px; font-size: 0.9rem; text-transform: uppercase;">
+            System Entry
+          </h2>
+          
+          <div class="about-text">
+              <span style="color: #bba2ff; font-weight: bold; display: block; margin-bottom: 12px; font-family: 'Cinzel', serif; font-size: 1rem;">
+                  "Mastery is a trade. Discipline is the work; desire is the pay."
+              </span>
+              Most systems fail because they rely on suppression—a high-friction strategy. The Barter Ledger operates on a different logic: <strong>Your habits are the ultimate currency for motivation.</strong> 
+              <br><br>
+              This is a system of internal commerce. Barter an hour of deep study for ten minutes of digital noise. By treating your nature as a partner rather than an enemy, you stop resisting and start performing.
+              <br><br>
+              <span style="color: #0088ff; font-family: 'Cinzel', serif; font-weight: bold;">Embrace your shadows. Use them as leverage.</span>
+          </div>
+
+          <button class="btn btn-google" style="margin-top: 35px; border: 1px solid #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.3); padding: 18px; font-weight: bold; width: 100%;" onclick="handleGoogleLogin()">
+              Authenticate System Access
+          </button>
+      </div>
     </div>
   </div>
 
@@ -233,7 +257,8 @@
       await loadCloudData();
     } else {
       currentUser = null;
-      document.getElementById('auth-screen').style.display = 'block';
+      // We set to flex so it centers correctly
+      document.getElementById('auth-screen').style.display = 'flex';
       document.getElementById('app-screen').style.display = 'none';
     }
   });
@@ -259,29 +284,24 @@
   }
 
   function cleanPerishables() {
-  let now = Date.now();
-  let changed = false;
-  
-  contracts.forEach(c => {
-    if (c.perishHrs && Array.isArray(c.inventory) && c.inventory.length > 0) {
-      let expiryMs = c.perishHrs * 3600000;
-      
-      // Filter out only the tags that haven't expired yet
-      let initialCount = c.inventory.length;
-      c.inventory = c.inventory.filter(timestamp => (now - timestamp) <= expiryMs);
-      
-      if (c.inventory.length !== initialCount) {
-          c.balance = c.inventory.length;
-          changed = true;
+    let now = Date.now();
+    let changed = false;
+    contracts.forEach(c => {
+      if (c.perishHrs && Array.isArray(c.inventory) && c.inventory.length > 0) {
+        let expiryMs = c.perishHrs * 3600000;
+        let initialCount = c.inventory.length;
+        c.inventory = c.inventory.filter(timestamp => (now - timestamp) <= expiryMs);
+        if (c.inventory.length !== initialCount) {
+            c.balance = c.inventory.length;
+            changed = true;
+        }
       }
+    });
+    if (changed) {
+        renderContracts(); 
+        saveToCloud();
     }
-  });
-  
-  if (changed) {
-      renderContracts(); 
-      saveToCloud();
   }
-}
 
   function saveToCloud() {
     if (!currentUser) return;
@@ -296,14 +316,11 @@
     const d = document.getElementById(id);
     const isOpening = d.style.display === 'none';
     d.style.display = isOpening ? 'block' : 'none';
-
-    // FIX: If we are CLOSING the main contract drawer, 
-    // force the advanced options to close and the checkbox to uncheck.
     if (id === 'contract-drawer' && !isOpening) {
         document.getElementById('contract-adv-options').style.display = 'none';
         document.getElementById('new-contract-adv-toggle').checked = false;
     }
-};
+  };
 
   window.modifyGoal = (i, amt) => { savingsGoals[i].current += amt; renderGoals(); saveToCloud(); };
   window.injectGoal = (i, add) => { 
@@ -342,28 +359,17 @@
   }
 
   window.modifyBalance = (i, amt) => { 
-  let c = contracts[i];
-  // Initialize as array if it isn't one yet (for legacy data)
-  if (!Array.isArray(c.inventory)) { c.inventory = []; }
-
-  if (amt > 0) {
-      if (c.limitOne && c.inventory.length >= 1) { return; } 
-      
-      // Add a "tag" for every unit earned
-      for (let n = 0; n < amt; n++) {
-          c.inventory.push(Date.now());
-      }
-  } else {
-      // Remove the oldest rewards first (FIFO)
-      for (let n = 0; n < Math.abs(amt); n++) {
-          c.inventory.shift(); 
-      }
-  }
-  // Update the displayed balance for the UI
-  c.balance = c.inventory.length; 
-  renderContracts(); 
-  saveToCloud(); 
-};
+    let c = contracts[i];
+    if (!Array.isArray(c.inventory)) { c.inventory = []; }
+    if (amt > 0) {
+        if (c.limitOne && c.inventory.length >= 1) { return; } 
+        for (let n = 0; n < amt; n++) { c.inventory.push(Date.now()); }
+    } else {
+        for (let n = 0; n < Math.abs(amt); n++) { c.inventory.shift(); }
+    }
+    c.balance = c.inventory.length; 
+    renderContracts(); saveToCloud(); 
+  };
 
   function renderContracts() {
     const container = document.getElementById('contracts-container');
@@ -391,25 +397,19 @@
     let c = parseInt(document.getElementById('new-cost').value) || 1;
     let perish = document.getElementById('new-contract-perish').checked ? parseInt(document.getElementById('new-contract-perish-hrs').value) : null;
     let limit = document.getElementById('new-contract-limit').checked;
-
     if (t && r) {
-        contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: e, costRate: c, perishHrs: perish, limitOne: limit, inventory: [] });
-        
-        // Reset Inputs
-        document.getElementById('new-task').value=''; 
-        document.getElementById('new-reward').value='';
-        document.getElementById('new-earn').value='';
-        document.getElementById('new-cost').value='';
-        
-        // RESET THE ADVANCED STATE
-        document.getElementById('new-contract-adv-toggle').checked = false;
-        document.getElementById('contract-adv-options').style.display = 'none'; // Force hide the drawer
-        document.getElementById('new-contract-perish').checked = false;
-        document.getElementById('new-contract-limit').checked = false;
-
-        renderContracts(); saveToCloud(); closeSettings();
+      contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: e, costRate: c, perishHrs: perish, limitOne: limit, inventory: [] });
+      document.getElementById('new-task').value=''; 
+      document.getElementById('new-reward').value='';
+      document.getElementById('new-earn').value='';
+      document.getElementById('new-cost').value='';
+      document.getElementById('new-contract-adv-toggle').checked = false;
+      document.getElementById('contract-adv-options').style.display = 'none';
+      document.getElementById('new-contract-perish').checked = false;
+      document.getElementById('new-contract-limit').checked = false;
+      renderContracts(); saveToCloud(); closeSettings();
     }
-}
+  }
 
   window.resetToOEM = () => {
     if (confirm("Reset everything?")) {
