@@ -16,6 +16,7 @@
   body { 
     background-color: #09090e; color: #e0e0f0; font-family: system-ui, -apple-system, sans-serif; 
     margin: 0; padding: 110px 20px 40px 20px; touch-action: manipulation;
+    width: 100%; min-height: 100%;
   }
   
   h1 { 
@@ -69,9 +70,9 @@
   .user-profile { display: flex; align-items: center; gap: 12px; margin-top: 25px; padding-top: 20px; border-top: 1px solid #2d244a; color: #888; font-size: 0.85rem; }
   .user-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #0088ff; }
 
-  /* --- AUTH SCREEN OVERHAUL --- */
+  /* --- MOBILE-FIXED AUTH SCREEN --- */
   #auth-screen { 
-    display: none; /* Initially hidden, JS will set to 'flex' */
+    display: none; /* JS toggles to flex */
     align-items: center; 
     justify-content: center;
     position: fixed;
@@ -86,6 +87,7 @@
     padding: 20px;
     box-sizing: border-box;
     margin: 0 !important;
+    backface-visibility: hidden; /* iOS Hardware Acceleration */
   }
 
   .auth-card {
@@ -116,7 +118,11 @@
     text-align: left;
   }
 
-  #app-screen { display: none; }
+  #app-screen { 
+    display: none; 
+    position: relative;
+    z-index: 1; /* Ensures it sits under auth but above body */
+  }
 </style>
 </head>
 <body>
