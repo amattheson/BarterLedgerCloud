@@ -73,33 +73,36 @@
 
   #app-screen { display: none; }
  /* 1. The Full-Screen Overlays */
+  /* 1. The Master Overlay - Dead Center on all Devices */
   #auth-screen { 
     display: flex; 
     align-items: center; 
     justify-content: center;
-    position: fixed; /* Fixes it to the viewport */
-    top: 0; left: 0;
+    position: fixed;
+    top: 0; 
+    left: 0;
     width: 100vw; 
-    height: 100dvh; /* Dynamic height for mobile browsers */
+    height: 100vh; /* Standard height for laptops */
+    height: 100dvh; /* Dynamic height for iOS Safari */
     background: 
       radial-gradient(circle, rgba(9,9,14,0.6) 0%, rgba(9,9,14,1) 90%),
       url('icon.png') no-repeat center center;
     background-size: cover;
     z-index: 9999;
+    margin: 0 !important; /* Force reset any legacy margins */
     padding: 20px;
     box-sizing: border-box;
-    margin: 0; /* Remove any previous margins */
   }
 
-  /* 2. The Gradient Border Card */
+  /* 2. The Card Container */
   .auth-card {
     background: linear-gradient(135deg, #0088ff, #ff0080); 
-    padding: 2px; /* The border thickness */
+    padding: 2px; 
     border-radius: 12px;
     max-width: 450px;
     width: 100%;
     box-shadow: 0 0 30px rgba(0, 136, 255, 0.2), 0 0 50px rgba(255, 0, 128, 0.2);
-    display: block; /* Ensure it doesn't inherit flex properties incorrectly */
+    /* No margins needed here, Flexbox handles it */
   }
 
   .auth-card-inner {
@@ -110,7 +113,7 @@
     -webkit-backdrop-filter: blur(12px);
   }
 
-  /* 3. The Text Block (Unified) */
+  /* 3. The Instruction Set */
   .about-text { 
     font-size: 0.95rem; 
     line-height: 1.6; 
@@ -119,32 +122,8 @@
     padding: 15px;
     background: rgba(255, 255, 255, 0.03); 
     border-radius: 6px;
-    text-align: left; /* Keep text readable */
+    text-align: left;
   }
-</style>
-
-<div id="auth-screen">
-  <div class="auth-card">
-    <div class="auth-card-inner">
-        <h1 style="position: static; border: none; box-shadow: none; background: transparent; padding: 0 0 10px 0; font-size: 2rem; color: #fff; text-align: center;">
-          The Barter Ledger
-        </h1>
-        <h2 style="margin-top:0; border:none; text-align: center; color: #bba2ff; letter-spacing: 2px; font-size: 0.9rem; text-transform: uppercase;">
-          System Entry
-        </h2>
-        
-        <div class="about-text">
-            <span style="color: #bba2ff; font-weight: bold; display: block; margin-bottom: 12px; font-family: 'Cinzel', serif; font-size: 1rem;">
-                "Mastery is a trade. Discipline is the work; desire is the pay."
-            </span>
-            
-            Most systems fail because they rely on suppression. The Barter Ledger operates on a different logic: <strong>Your habits are the ultimate currency for motivation.</strong> 
-            <br><br>
-            By treating your nature as a partner rather than an enemy, you stop resisting and start performing.
-            <br><br>
-            <span style="color: #0088ff; font-family: 'Cinzel', serif; font-weight: bold;">Embrace your shadows. Use them as leverage.</span>
-        </div>
-
         <button class="btn btn-google" style="margin-top: 35px; border: 1px solid #0088ff; box-shadow: 0 0 15px rgba(0, 136, 255, 0.3); padding: 18px; font-weight: bold; width: 100%;" onclick="handleGoogleLogin()">
             Authenticate System Access
         </button>
