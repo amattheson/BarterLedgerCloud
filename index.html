@@ -233,25 +233,29 @@
   }
 
   function cleanPerishables() {
-    let now = Date.now();
-    let changed = false;
-    
-    contracts.forEach(c => {
-      if (c.perishHrs && c.lastEarned && c.balance > 0) {
-        let expiryMs = c.perishHrs * 3600000;
-        if (now - c.lastEarned > expiryMs) { 
-            c.balance = 0; 
-            c.lastEarned = null; // Reset the clock
-            changed = true;
-        }
+  let now = Date.now();
+  let changed = false;
+  
+  contracts.forEach(c => {
+    if (c.perishHrs && Array.isArray(c.inventory) && c.inventory.length > 0) {
+      let expiryMs = c.perishHrs * 3600000;
+      
+      // Filter out only the tags that haven't expired yet
+      let initialCount = c.inventory.length;
+      c.inventory = c.inventory.filter(timestamp => (now - timestamp) <= expiryMs);
+      
+      if (c.inventory.length !== initialCount) {
+          c.balance = c.inventory.length;
+          changed = true;
       }
-    });
-    
-    if (changed) {
-        renderContracts(); 
-        saveToCloud();
     }
+  });
+  
+  if (changed) {
+      renderContracts(); 
+      saveToCloud();
   }
+}
 
   function saveToCloud() {
     if (!currentUser) return;
@@ -304,18 +308,28 @@
   }
 
   window.modifyBalance = (i, amt) => { 
-    let c = contracts[i];
-    if (amt > 0) {
-        if (c.limitOne && c.balance >= 1) { return; } 
-        c.balance = (c.balance || 0) + amt;
-        c.lastEarned = Date.now(); // Start the clock
-    } else {
-        c.balance = Math.max(0, (c.balance || 0) + amt);
-        if (c.balance === 0) { c.lastEarned = null; } // Clear the clock on full claim
-    }
-    renderContracts(); 
-    saveToCloud(); 
-  };
+  let c = contracts[i];
+  // Initialize as array if it isn't one yet (for legacy data)
+  if (!Array.isArray(c.inventory)) { c.inventory = []; }
+
+  if (amt > 0) {
+      if (c.limitOne && c.inventory.length >= 1) { return; } 
+      
+      // Add a "tag" for every unit earned
+      for (let n = 0; n < amt; n++) {
+          c.inventory.push(Date.now());
+      }
+  } else {
+      // Remove the oldest rewards first (FIFO)
+      for (let n = 0; n < Math.abs(amt); n++) {
+          c.inventory.shift(); 
+      }
+  }
+  // Update the displayed balance for the UI
+  c.balance = c.inventory.length; 
+  renderContracts(); 
+  saveToCloud(); 
+};
 
   function renderContracts() {
     const container = document.getElementById('contracts-container');
