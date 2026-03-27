@@ -268,8 +268,16 @@
   window.closeSettings = () => { document.getElementById('settings-panel').style.display = 'none'; };
   window.toggleDrawer = (id) => {
     const d = document.getElementById(id);
-    d.style.display = d.style.display === 'none' ? 'block' : 'none';
-  };
+    const isOpening = d.style.display === 'none';
+    d.style.display = isOpening ? 'block' : 'none';
+
+    // FIX: If we are CLOSING the main contract drawer, 
+    // force the advanced options to close and the checkbox to uncheck.
+    if (id === 'contract-drawer' && !isOpening) {
+        document.getElementById('contract-adv-options').style.display = 'none';
+        document.getElementById('new-contract-adv-toggle').checked = false;
+    }
+};
 
   window.modifyGoal = (i, amt) => { savingsGoals[i].current += amt; renderGoals(); saveToCloud(); };
   window.injectGoal = (i, add) => { 
@@ -359,20 +367,23 @@
     let limit = document.getElementById('new-contract-limit').checked;
 
     if (t && r) {
-      contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: e, costRate: c, perishHrs: perish, limitOne: limit });
-      
-      // Cleanup inputs
-      document.getElementById('new-task').value=''; 
-      document.getElementById('new-reward').value='';
-      document.getElementById('new-earn').value='';
-      document.getElementById('new-cost').value='';
-      document.getElementById('new-contract-adv-toggle').checked = false;
-      document.getElementById('new-contract-perish').checked = false;
-      document.getElementById('new-contract-limit').checked = false;
+        contracts.push({ id: Date.now().toString(), task: t, reward: r, balance: 0, earnRate: e, costRate: c, perishHrs: perish, limitOne: limit, inventory: [] });
+        
+        // Reset Inputs
+        document.getElementById('new-task').value=''; 
+        document.getElementById('new-reward').value='';
+        document.getElementById('new-earn').value='';
+        document.getElementById('new-cost').value='';
+        
+        // RESET THE ADVANCED STATE
+        document.getElementById('new-contract-adv-toggle').checked = false;
+        document.getElementById('contract-adv-options').style.display = 'none'; // Force hide the drawer
+        document.getElementById('new-contract-perish').checked = false;
+        document.getElementById('new-contract-limit').checked = false;
 
-      renderContracts(); saveToCloud(); closeSettings();
+        renderContracts(); saveToCloud(); closeSettings();
     }
-  }
+}
 
   window.resetToOEM = () => {
     if (confirm("Reset everything?")) {
