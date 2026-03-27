@@ -234,13 +234,23 @@
 
   function cleanPerishables() {
     let now = Date.now();
+    let changed = false;
+    
     contracts.forEach(c => {
-      if (c.perishHrs && c.lastEarned) {
-        let expiry = c.perishHrs * 3600000;
-        if (now - c.lastEarned > expiry) { c.balance = 0; }
+      if (c.perishHrs && c.lastEarned && c.balance > 0) {
+        let expiryMs = c.perishHrs * 3600000;
+        if (now - c.lastEarned > expiryMs) { 
+            c.balance = 0; 
+            c.lastEarned = null; // Reset the clock
+            changed = true;
+        }
       }
     });
-    saveToCloud();
+    
+    if (changed) {
+        renderContracts(); 
+        saveToCloud();
+    }
   }
 
   function saveToCloud() {
@@ -296,13 +306,15 @@
   window.modifyBalance = (i, amt) => { 
     let c = contracts[i];
     if (amt > 0) {
-        if (c.limitOne && c.balance >= 1) { return; }
+        if (c.limitOne && c.balance >= 1) { return; } 
         c.balance = (c.balance || 0) + amt;
-        c.lastEarned = Date.now();
+        c.lastEarned = Date.now(); // Start the clock
     } else {
         c.balance = Math.max(0, (c.balance || 0) + amt);
+        if (c.balance === 0) { c.lastEarned = null; } // Clear the clock on full claim
     }
-    renderContracts(); saveToCloud(); 
+    renderContracts(); 
+    saveToCloud(); 
   };
 
   function renderContracts() {
@@ -354,6 +366,7 @@
       renderGoals(); renderContracts(); saveToCloud(); closeSettings();
     }
   }
+  setInterval(cleanPerishables, 60000);
 </script>
 </body>
 </html>
