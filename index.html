@@ -13,23 +13,26 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <style>
+ * { 
+    box-sizing: border-box; 
+  }
+
   body { 
     background-color: #09090e; color: #e0e0f0; font-family: system-ui, -apple-system, sans-serif; 
     margin: 0; padding: 110px 20px 40px 20px; touch-action: manipulation;
-    width: 100%; min-height: 100%;
-    overflow-x: hidden; /* This is the 'Master Guardrail' */
+    width: 100%; min-height: 100vh;
+    overflow-x: hidden; /* Hard stop for horizontal scroll */
+    position: relative;
   }
   
   h1 { 
     font-family: 'Cinzel', serif; font-size: 1.6rem; text-align: center; color: #ffffff; font-weight: 700; 
     letter-spacing: 2px; border-bottom: 1px solid #2d244a; padding: 25px 0; 
     text-shadow: 0 0 12px rgba(188, 19, 254, 0.6); text-transform: uppercase;
-    position: fixed; top: 0; left: 0; width: 100%; background-color: #09090e;
+    position: fixed; top: 0; left: 0; 
+    width: 100%; /* Spans the full width */
+    background-color: #09090e;
     z-index: 1000; margin: 0; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
-    /* ... keep your existing styles ... */
-    left: 0; 
-    width: 100%; 
-    box-sizing: border-box; /* Ensures padding doesn't push width past 100% */
   }
 
   h2 { color: #bba2ff; font-weight: 400; font-size: 1.2rem; margin-top: 30px; border-bottom: 1px dashed #2d244a; padding-bottom: 5px; text-shadow: 0 0 8px rgba(187, 162, 255, 0.3); }
@@ -82,7 +85,7 @@
     justify-content: center;
     position: fixed;
     top: 0; left: 0;
-    width: 100%; /* Changed from 100vw to 100% */
+    width: 100%; 
     height: 100dvh;
     background: 
       radial-gradient(circle, rgba(9,9,14,0.6) 0%, rgba(9,9,14,1) 90%),
@@ -90,7 +93,6 @@
     background-size: cover;
     z-index: 9999;
     padding: 20px;
-    box-sizing: border-box;
     margin: 0 !important;
     backface-visibility: hidden;
   }
@@ -99,8 +101,8 @@
     background: linear-gradient(135deg, #0088ff, #ff0080); 
     padding: 2px; 
     border-radius: 12px;
-    max-width: 450px;
-    width: 100%;
+    max-width: 100%; /* Prevents card from pushing out on small screens */
+    width: 450px; /* Ideal size */
     box-shadow: 0 0 30px rgba(0, 136, 255, 0.2), 0 0 50px rgba(255, 0, 128, 0.2);
   }
 
@@ -126,7 +128,8 @@
   #app-screen { 
     display: none; 
     position: relative;
-    z-index: 1; /* Ensures it sits under auth but above body */
+    width: 100%;
+    z-index: 1;
   }
 </style>
 </head>
